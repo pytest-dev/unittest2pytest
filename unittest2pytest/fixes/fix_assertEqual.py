@@ -1,6 +1,7 @@
 from lib2to3.fixer_base import BaseFix
 from lib2to3.fixer_util import (
     Comma, Name, Call, LParen, RParen, Dot, Node, Leaf,
+    Newline, KeywordArg, find_indentation,
     ArgList, String, Number, syms, is_tuple, token)
 
 from lib2to3.pygram import python_symbols as symbols
@@ -68,6 +69,23 @@ def AlmostOp(places_op, delta_op, first, second, kws):
         return CompOp(places_op, round_op, Number(0), {})
 
 
+def RaisesOp(context, exceptionClass, indent, kws, arglist):
+    with_item = Call(Name(context), [exceptionClass])
+    with_item.prefix = " "
+    args = []
+    arglist = [a.clone() for a in arglist.children[4:]]
+    if arglist:
+        arglist[0].prefix=""
+    suite = Call(kws['callableObj'], arglist)
+    suite.prefix = indent + (4 * " ")
+    return Node(syms.with_stmt,
+                [Name('with'),
+                 with_item,
+                 Name(':'),
+                 Newline(),
+                 suite])
+
+
 _method_map = {
     # simple ones
     'assertEqual':         partial(CompOp, '=='),
@@ -102,11 +120,11 @@ _method_map = {
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),
     'assertNotAlmostEqual': partial(AlmostOp, "!=", ">"),
 
+    'assertRaises':         partial(RaisesOp, 'pytest.raises'),
 }
 
 """
     'assertNotRegexpMatches': '',
-    'assertRaises': '',
     'assertRaisesRegexp': '',
     'assertRegexpMatches': '',
     }
@@ -224,8 +242,9 @@ class FixAssertequal(BaseFix):
         args = inspect.getcallargs(test_func, *posargs, **kwargs)
         assert args['self'] == self.SelfMarker
         argspec = inspect.getargspec(test_func)
-        assert argspec.varargs is None  # unhandled case
-        assert argspec.keywords is None  # unhandled case
+        if not 'Raises' in method:
+            assert argspec.varargs is None  # unhandled case
+            assert argspec.keywords is None  # unhandled case
 
         # get the required arguments
         if argspec.defaults:
@@ -233,10 +252,15 @@ class FixAssertequal(BaseFix):
         else:
             required_args = argspec.args[1:]
         required_args = [args[argname] for argname in required_args]
-        
-        n_stmt = Node(syms.assert_stmt,
-                      [Name('assert'),
-                       _method_map[method](*required_args, kws=args)])
+        if method == 'assertRaises':
+            n_stmt = _method_map[method](*required_args,
+                                         indent=find_indentation(node),
+                                         kws=args,
+                                         arglist=results['arglist'])
+        else:
+            n_stmt = Node(syms.assert_stmt,
+                          [Name('assert'),
+                           _method_map[method](*required_args, kws=args)])
         #if method == 'assertTrue':
         #    import pdb ; pdb.set_trace()
         if args.get('msg', None) is not None:
