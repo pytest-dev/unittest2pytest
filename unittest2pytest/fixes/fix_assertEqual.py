@@ -85,11 +85,12 @@ _method_map = {
     'assertTrue':          partial(UnaryOp, '', ''),
 
     # types ones
-    'assertDictEqual':      partial(TypeEqual, dict),
-    'assertListEqual':      partial(TypeEqual, list),
-    'assertMultiLineEqual': partial(TypeEqual, basestring),
-    'assertSetEqual':       partial(TypeEqual, set),
-    'assertTupleEqual':     partial(TypeEqual, tuple),
+    'assertDictEqual':      partial(CompOp, '=='),
+    'assertListEqual':      partial(CompOp, '=='),
+    'assertMultiLineEqual': partial(CompOp, '=='),
+    'assertSetEqual':       partial(CompOp, '=='),
+    'assertTupleEqual':     partial(CompOp, '=='),
+    'assertSequenceEqual':  SequenceEqual,
 
     # :todo:
     #'assertDictContainsSubset': '',
