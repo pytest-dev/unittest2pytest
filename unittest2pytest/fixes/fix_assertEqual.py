@@ -45,8 +45,11 @@ def DualOp(template, first, second, kws):
     return Node(syms.test, kids, prefix=" ")
 
 
-def TypeEqual(type, left, right, kws):
-    pass
+def SequenceEqual(left, right, kws):
+    if 'seq_type' in kws:
+        # :todo: implement `assert isinstance(xx, seq_type`
+        pass
+    return CompOp('==', left, right, kws)
 
 
 def AlmostOp(places_op, delta_op, first, second, kws):
@@ -106,7 +109,6 @@ _method_map = {
     'assertRaises': '',
     'assertRaisesRegexp': '',
     'assertRegexpMatches': '',
-    'assertSequenceEqual': '',
     }
 """
 
