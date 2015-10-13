@@ -125,23 +125,28 @@ _method_map = {
 }
 
 """
-    'assertNotRegexpMatches': '',
-    'assertRaisesRegexp': '',
     'assertRegexpMatches': '',
     }
 """
 
-# Aliases
-_method_map['assertEquals'] = _method_map['assertEqual']
-_method_map['assertNotEquals'] = _method_map['assertNotEqual']
-_method_map['failIf'] = _method_map['assertFalse']
-#_method_map['failIfAlmostEqual'] = _method_map['assertNotAlmostEqual']
-_method_map['failIfEqual'] = _method_map['assertNotEqual']
-_method_map['failUnless'] = _method_map['assertTrue']
-#_method_map['failUnlessAlmostEqual'] = _method_map['assertAlmostEqual']
-_method_map['failUnlessEqual'] = _method_map['assertEqual']
-#_method_map['failUnlessRaises'] = _method_map['assertRaises']
+# (Deprecated) Aliases
+_method_aliases = {
+    'assertEquals'         : 'assertEqual',
+    'assertNotEquals'      : 'assertNotEqual',
+    'assert_'              : 'assertTrue',
+    'assertAlmostEquals'   : 'assertAlmostEqual',
+    'assertNotAlmostEquals': 'assertNotAlmostEqual',
+    'assertRegexpMatches'  : 'assertRegex',
+    'assertRaisesRegexp'   : 'assertRaisesRegex',
 
+    'failUnlessEqual'      : 'assertEqual',
+    'failIfEqual'          : 'assertNotEqual',
+    'failUnless'           : 'assertTrue',
+    'failIf'               : 'assertFalse',
+    'failUnlessRaises'     : 'assertRaises',
+    'failUnlessAlmostEqual': 'assertAlmostEqual',
+    'failIfAlmostEqual'    : 'assertNotAlmostEqual',
+}
 
 
 """
@@ -197,7 +202,7 @@ class FixAssertequal(BaseFix):
       trailer< '.' method=( %s ) >
       trailer< '(' arglist=any ')' >
     >
-    """ % ' | '.join(map(repr, _method_map.keys()))
+    """ % ' | '.join(map(repr, (_method_map.keys() | _method_aliases.keys())))
 
     def transform(self, node, results):
 
@@ -218,6 +223,9 @@ class FixAssertequal(BaseFix):
                 posargs.append(arg.clone())
 
         method = results['method'][0].value
+        # map (deprecated) aliases to original to avoid analysing
+        # the decorator function
+        method = _method_aliases.get(method, method)
 
         posargs = []
         kwargs = {}
