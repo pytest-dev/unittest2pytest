@@ -202,7 +202,8 @@ class FixAssertequal(BaseFix):
       trailer< '.' method=( %s ) >
       trailer< '(' arglist=any ')' >
     >
-    """ % ' | '.join(map(repr, (_method_map.keys() | _method_aliases.keys())))
+    """ % ' | '.join(map(repr,
+                         (set(_method_map.keys()) | set(_method_aliases.keys()))))
 
     def transform(self, node, results):
 

@@ -38,13 +38,14 @@ def resolve_func_args(test_func, posargs, kwargs):
         inspect.signature
     except AttributeError:
         # Python 2.7
+        posargs.insert(0, SelfMarker)
         args = inspect.getcallargs(test_func, *posargs, **kwargs)
 
         assert args['self'] == SelfMarker
         argspec = inspect.getargspec(test_func)
-        if not 'Raises' in method:
-            assert argspec.varargs is None  # unhandled case
-            assert argspec.keywords is None  # unhandled case
+        #if not 'Raises' in method:
+        #    assert argspec.varargs is None  # unhandled case
+        #    assert argspec.keywords is None  # unhandled case
 
         # get the required arguments
         if argspec.defaults:
