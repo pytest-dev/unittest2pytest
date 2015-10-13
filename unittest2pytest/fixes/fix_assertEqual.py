@@ -124,10 +124,22 @@ _method_map = {
     'assertRaises':         partial(RaisesOp, 'pytest.raises'),
 }
 
-"""
-    'assertRegexpMatches': '',
-    }
-"""
+for m in list(_method_map.keys()):
+    if not hasattr(unittest.TestCase, m):
+        del _method_map[m]
+
+if hasattr(unittest.TestCase, 'assertRegex'):
+    # new name in Python 3.2
+    _method_map['assertRegex'] = NotImplementedError # 're.match(\2, \1)'
+else:
+    _method_map['assertRegexpMatches'] = NotImplementedError
+
+if hasattr(unittest.TestCase, 'assertRaisesRegex'):
+    # new name in Python 3.2
+    _method_map['assertRaisesRegex'] = NotImplementedError
+else:
+    _method_map['assertRaisesRegexp'] = NotImplementedError
+
 
 # (Deprecated) Aliases
 _method_aliases = {
@@ -147,6 +159,10 @@ _method_aliases = {
     'failUnlessAlmostEqual': 'assertAlmostEqual',
     'failIfAlmostEqual'    : 'assertNotAlmostEqual',
 }
+
+for a, o in list(_method_aliases.items()):
+    if not o in _method_map:
+        del _method_aliases[a]
 
 
 """
