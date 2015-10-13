@@ -219,13 +219,6 @@ class FixAssertequal(BaseFix):
     PATTERN = """
     power< 'self'
       trailer< '.' method=( %s ) >
-      trailer< '(' arglist=arglist< any+ > ')' >
-    >
-    """ % ' | '.join(map(repr, _method_map.keys()))
-
-    PATTERN = """
-    power< 'self'
-      trailer< '.' method=( %s ) >
       trailer< '(' arglist=any ')' >
     >
     """ % ' | '.join(map(repr,
@@ -238,7 +231,6 @@ class FixAssertequal(BaseFix):
                 return
             elif isinstance(arg, Node) and arg.type == syms.argument:
                 # keyword argument
-                #import pdb ; pdb.set_trace()
                 name, equal, value = arg.children
                 assert name.type == token.NAME # what is the symbol for 1?
                 assert equal.type == token.EQUAL # what is the symbol for 1?
@@ -281,10 +273,7 @@ class FixAssertequal(BaseFix):
             n_stmt = Node(syms.assert_stmt,
                           [Name('assert'),
                            _method_map[method](*required_args, kws=argsdict)])
-        #if method == 'assertTrue':
-        #    import pdb ; pdb.set_trace()
         if argsdict.get('msg', None) is not None:
-            #import pdb ; pdb.set_trace()
             n_stmt.children.extend((Name(','), argsdict['msg']))
         n_stmt.prefix = node.prefix
         return n_stmt
