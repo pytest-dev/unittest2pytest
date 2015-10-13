@@ -77,7 +77,11 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
     arglist = [a.clone() for a in arglist.children[4:]]
     if arglist:
         arglist[0].prefix=""
-    suite = Call(kws['callableObj'], arglist)
+    # :fixme: this uses hardcoded parameter names, which may change
+    if 'callableObj' in kws:
+        suite = Call(kws['callableObj'], arglist)
+    else:
+        suite = Call(kws['callable_obj'], arglist)
     suite.prefix = indent + (4 * " ")
     return Node(syms.with_stmt,
                 [Name('with'),
@@ -122,6 +126,12 @@ _method_map = {
     'assertNotAlmostEqual': partial(AlmostOp, "!=", ">"),
 
     'assertRaises':         partial(RaisesOp, 'pytest.raises'),
+
+    # new in Python 3.2
+    'assertWarns':          partial(RaisesOp, 'pytest.warns'),
+
+    #'assertWarnsRegex':    're.match(\2, \1)' # new name, py >= 3.2
+    #'assertLogs':
 }
 
 for m in list(_method_map.keys()):
@@ -262,8 +272,6 @@ class FixAssertequal(BaseFix):
 
         required_args, argsdict = utils.resolve_func_args(test_func, posargs, kwargs)
 
-        if method in ('assertWarns', ):
-            return None
         if method in ('assertRaises', 'assertWarns'):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),

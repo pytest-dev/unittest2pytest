@@ -17,7 +17,7 @@ class TestRaises(TestCase):
             someFunc(1,2,3, foo=42, bar=43)
 
 
-class TestWarns(XTestCase):
+class TestWarns(TestCase):
     def test_simple(self):
         with pytest.warns(RunTimeError):
             someFunc()
