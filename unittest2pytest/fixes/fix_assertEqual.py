@@ -7,8 +7,9 @@ from lib2to3.fixer_util import (
 from lib2to3.pygram import python_symbols as symbols
 
 from functools import partial
-import inspect
 import unittest
+
+from .. import utils
 
 
 def CompOp(op, left, right, kws):
@@ -198,8 +199,6 @@ class FixAssertequal(BaseFix):
     >
     """ % ' | '.join(map(repr, _method_map.keys()))
 
-    class SelfMarker: pass
-
     def transform(self, node, results):
 
         def process_arg(arg):
@@ -217,54 +216,42 @@ class FixAssertequal(BaseFix):
             else:
                 assert not kwargs, 'all positional args are assumed to come first'
                 posargs.append(arg.clone())
-            
+
         method = results['method'][0].value
 
-        posargs = [self.SelfMarker]
+        posargs = []
         kwargs = {}
 
         # This is either a "arglist" or a single argument
-        if method == 'assertTrue':
-            #print results.keys()
-            pass
-        #import pdb ; pdb.set_trace()
-        
-        
         if results['arglist'].type == syms.arglist:
             for arg in results['arglist'].children:
                 process_arg(arg)
         else:
             process_arg(results['arglist'])
-        #print posargs
         
-        test_func = getattr(unittest.TestCase, method)
-        
-        args = inspect.getcallargs(test_func, *posargs, **kwargs)
-        assert args['self'] == self.SelfMarker
-        argspec = inspect.getargspec(test_func)
-        if not 'Raises' in method:
-            assert argspec.varargs is None  # unhandled case
-            assert argspec.keywords is None  # unhandled case
+        try:
+            test_func = getattr(unittest.TestCase, method)
+        except AttributeError:
+            raise RuntimeError("Your unittest package does not support '%s'. "
+                               "consider updating the package" % method)
 
-        # get the required arguments
-        if argspec.defaults:
-            required_args = argspec.args[1:-len(argspec.defaults)]
-        else:
-            required_args = argspec.args[1:]
-        required_args = [args[argname] for argname in required_args]
-        if method == 'assertRaises':
+        required_args, argsdict = utils.resolve_func_args(test_func, posargs, kwargs)
+
+        if method in ('assertWarns', ):
+            return None
+        if method in ('assertRaises', 'assertWarns'):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
-                                         kws=args,
+                                         kws=argsdict,
                                          arglist=results['arglist'])
         else:
             n_stmt = Node(syms.assert_stmt,
                           [Name('assert'),
-                           _method_map[method](*required_args, kws=args)])
+                           _method_map[method](*required_args, kws=argsdict)])
         #if method == 'assertTrue':
         #    import pdb ; pdb.set_trace()
-        if args.get('msg', None) is not None:
+        if argsdict.get('msg', None) is not None:
             #import pdb ; pdb.set_trace()
-            n_stmt.children.extend((Name(','), args['msg']))
+            n_stmt.children.extend((Name(','), argsdict['msg']))
         n_stmt.prefix = node.prefix
         return n_stmt
