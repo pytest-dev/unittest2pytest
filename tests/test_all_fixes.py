@@ -29,7 +29,7 @@ def collect_all_test_fixtures():
         # subdirectory, only run the fixer of the subdirectory name, else run
         # all fixers.
         for in_file in _collect_in_files_from_directory(root):
-            fixer_to_run = None
+            fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
             yield (in_file, fixer_to_run)
 
 def _get_id(argvalue):
