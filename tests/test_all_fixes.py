@@ -30,13 +30,14 @@ def collect_all_test_fixtures():
         # all fixers.
         for in_file in _collect_in_files_from_directory(root):
             fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
-            yield (in_file, fixer_to_run)
+            yield (fixer_to_run, in_file)
 
 def _get_id(argvalue):
-    return os.path.basename(argvalue).replace("_in.py", "")
+    if argvalue.startswith(FIXTURE_PATH):
+        return os.path.basename(argvalue).replace("_in.py", "")
 
 
-@pytest.mark.parametrize("in_file, fixer",
+@pytest.mark.parametrize("fixer, in_file",
                          collect_all_test_fixtures(), ids=_get_id)
 def test_check_fixture(in_file, fixer, tmpdir):
     if fixer:
