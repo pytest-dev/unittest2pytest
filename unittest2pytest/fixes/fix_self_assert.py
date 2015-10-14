@@ -214,7 +214,7 @@ Node(power,
 """
 
 
-class FixAssertequal(BaseFix):
+class FixSelfAssert(BaseFix):
 
     PATTERN = """
     power< 'self'
