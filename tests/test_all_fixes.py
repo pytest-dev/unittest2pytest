@@ -13,7 +13,7 @@ from difflib import unified_diff
 
 from lib2to3.main import main
 
-FIXTURE_PATH = os.path.join(os.path.dirname(__file__), '')
+FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 
 
 def _collect_in_files_from_directory(directory):
