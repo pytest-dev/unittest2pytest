@@ -47,10 +47,13 @@ def test_check_fixture(in_file, fixer, tmpdir):
         main("unittest2pytest.fixes",
              args=['--no-diffs', '--fix', 'all', '-w', in_file,
                    '--nobackups', '--output-dir', str(tmpdir)])
-    with tmpdir.join(os.path.basename(in_file)).open() as fh:
-        result_file_contents = fh.readlines()
-    out_file = in_file.replace("_in.py", "_out.py")
-    with open(out_file) as fh:
+
+    result_file_name = tmpdir.join(os.path.basename(in_file))
+    assert result_file_name.exists(), '%s is missing' % result_file_name
+    result_file_contents = result_file_name.readlines()
+
+    expected_file = in_file.replace("_in.py", "_out.py")
+    with open(expected_file) as fh:
         expected_contents = fh.readlines()
 
     if result_file_contents != expected_contents:
