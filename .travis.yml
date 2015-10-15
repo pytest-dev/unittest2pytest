@@ -1,0 +1,39 @@
+language: python
+# Use new container-based Travis infrastructure.
+sudo: false
+
+# Cache pip packages.
+cache: pip
+
+python:
+  - 2.7
+  - 3.1
+  - 3.2
+  - 3.3
+  - 3.4
+  - 3.5
+  - "nightly"
+
+install:
+  - pip install -r requirements.txt
+script: make test
+
+
+allow_failures:
+  # Just tests how PyInstaller performs with upcoming Python 3.6
+  - python: "nightly"
+
+# Install dependencies.
+install:
+  # Install unittest2pytest
+  - pip install -e .
+
+  # Install dependencies for tests.
+
+  # The download-progress bars break Travis's log view. Disable them
+  # by piping output through another program (if output is not a tty,
+  # no progress bars)
+  - pip install -r tests/requirements.txt | cat
+
+script:
+  - py.test
