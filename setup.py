@@ -29,8 +29,8 @@ def read(filename):
         return unicode(codecs.open(filename, encoding='utf-8').read())
     except NameError:
         return open(filename, 'r', encoding='utf-8').read()
-long_description = u'\n\n'.join([read('README.rst'),
-                                 read('CHANGES.rst')])
+long_description = '\n\n'.join([read('README.rst'),
+                                read('CHANGES.rst')])
 if sys.version_info < (3,):
     long_description = long_description.encode('utf-8')
 
