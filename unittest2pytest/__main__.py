@@ -26,5 +26,8 @@ __licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
 import lib2to3.main
 from . import fixes
 
-if __name__ == '__main__':
+def main():
     raise SystemExit(lib2to3.main.main(fixes.__name__))
+
+if __name__ == '__main__':
+    main()
