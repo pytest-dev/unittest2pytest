@@ -29,11 +29,9 @@ __licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
 
 from lib2to3.fixer_base import BaseFix
 from lib2to3.fixer_util import (
-    Comma, Name, Call, LParen, RParen, Dot, Node, Leaf,
+    Comma, Name, Call, Node, Leaf,
     Newline, KeywordArg, find_indentation,
-    ArgList, String, Number, syms, is_tuple, token)
-
-from lib2to3.pygram import python_symbols as symbols
+    ArgList, String, Number, syms, token)
 
 from functools import partial
 import unittest
@@ -43,7 +41,6 @@ from .. import utils
 
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
-    #import pdb ; pdb.set_trace()
     left.prefix = ""
     right.prefix = " "
     return Node(syms.comparison, (left, op, right), prefix=" ")
@@ -78,7 +75,7 @@ def DualOp(template, first, second, kws):
 
 def SequenceEqual(left, right, kws):
     if 'seq_type' in kws:
-        # :todo: implement `assert isinstance(xx, seq_type`
+        # :todo: implement `assert isinstance(xx, seq_type)`
         pass
     return CompOp('==', left, right, kws)
 
