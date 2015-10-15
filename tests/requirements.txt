@@ -1,5 +1,5 @@
 # For running tests
-pytest  # Testing framework.
+pytest >= 2.7.2  # Testing framework.
 pytest-catchlog  # Capture log output separately from stdout/stderr
 
 # Helper tools
