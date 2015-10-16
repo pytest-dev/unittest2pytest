@@ -160,25 +160,26 @@ _method_map = {
     # new in Python 3.2
     'assertWarns':          partial(RaisesOp, 'pytest.warns'),
 
+    'assertRaisesRegex':   NotImplementedError,
+    'assertRegex':   NotImplementedError,
     #'assertWarnsRegex':    're.match(\2, \1)' # new name, py >= 3.2
     #'assertLogs':
 }
 
+
+for newname, oldname in (
+        ('assertRaisesRegex', 'assertRaisesRegexp'),
+        ('assertRegex', 'assertRegexpMatches'),
+):
+    if not hasattr(unittest.TestCase, newname):
+        # use old name
+        _method_map[oldname] = _method_map[newname]
+        del _method_map[oldname]
+
+
 for m in list(_method_map.keys()):
     if not hasattr(unittest.TestCase, m):
         del _method_map[m]
-
-if hasattr(unittest.TestCase, 'assertRegex'):
-    # new name in Python 3.2
-    _method_map['assertRegex'] = NotImplementedError # 're.match(\2, \1)'
-else:
-    _method_map['assertRegexpMatches'] = NotImplementedError
-
-if hasattr(unittest.TestCase, 'assertRaisesRegex'):
-    # new name in Python 3.2
-    _method_map['assertRaisesRegex'] = NotImplementedError
-else:
-    _method_map['assertRaisesRegexp'] = NotImplementedError
 
 
 # (Deprecated) Aliases
