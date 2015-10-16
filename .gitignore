@@ -1,5 +1,62 @@
-.coverage
+# crazy-compiler standard excludes
+/projectlogo.png
+/docs/_build/
+*.[1-9]
+
+# editor artefacts
+*~
+.#*
+\#*#
+.*.swp
+
+#  build artefacts
+/.sconf_temp
+/.sconsign.*
+/config.h
+/config.log
+/config.status
+/autom4te*.cache
+/options.cache
+/stamp-h1
+
+# C, C++ build artefacts
+*.[oa]
+*.l[oa]
+*.al
+.libs
+.deps
+*.so
+*.so.[0-9]*
+*.rej
+
+*.dll
+.idea
+
+# Python build artefacts
+/build/
+/dist/
+/_venv/
+*.py[cod]
+*.egg
 *.egg-info
-dist
-*.tox
-*.pyc
+*.egg-link
+
+/nosetests.xml
+/.coverage
+/.tox
+/.achievements
+/.installed.cfg
+/.ropeproject
+
+# Mr Developer
+/.mr.developer.cfg
+/.project
+/.pydevproject
+
+# OS generated files
+*.DS_[sS]Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+*.pid
+._.**~
