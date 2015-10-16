@@ -1,3 +1,5 @@
+# required-method: assertLessEqual
+
 class TestAssertLessEqual(TestCase):
     def test_you(self):
         self.assertLessEqual(abc, 'xxx')

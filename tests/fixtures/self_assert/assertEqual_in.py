@@ -1,3 +1,5 @@
+# required-method: assertEqual
+
 class TestAssertEqual(TestCase):
     def test_you(self):
         self.assertEqual(abc, 'xxx')

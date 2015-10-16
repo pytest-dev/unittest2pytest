@@ -1,3 +1,5 @@
+# required-method: assertGreaterEqual
+
 class TestAssertGreaterEqual(TestCase):
     def test_you(self):
         self.assertGreaterEqual(abc, 'xxx')

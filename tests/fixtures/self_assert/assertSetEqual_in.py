@@ -1,3 +1,5 @@
+# required-method: assertSetEqual
+
 class TestSetEqual(TestCase):
     def test_simple(self):
         self.assertSetEqual(100, klm)

@@ -1,3 +1,5 @@
+# required-method: assertIsInstance
+
 class TestAssertIsInstance(TestCase):
     def test_you(self):
         assert isinstance(abc, 'xxx')

@@ -1,3 +1,5 @@
+# required-method: assertFalse
+
 class TestAssertFalse(TestCase):
     def test_you(self):
         assert not abc

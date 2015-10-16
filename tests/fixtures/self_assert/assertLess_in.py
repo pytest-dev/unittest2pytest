@@ -1,3 +1,5 @@
+# required-method: assertLess
+
 class TestAssertLess(TestCase):
     def test_you(self):
         self.assertLess(abc, 'xxx')

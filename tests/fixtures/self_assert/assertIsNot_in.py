@@ -1,3 +1,5 @@
+# required-method: assertIsNot
+
 class TestAssertIsNot(TestCase):
     def test_you(self):
         self.assertIsNot(abc, 'xxx')

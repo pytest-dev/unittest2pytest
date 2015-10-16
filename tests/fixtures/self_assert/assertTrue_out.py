@@ -1,3 +1,5 @@
+# required-method: assertTrue
+
 class TestAssertTrue(TestCase):
     def test_you(self):
         assert abc

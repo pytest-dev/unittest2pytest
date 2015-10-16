@@ -1,3 +1,5 @@
+# required-method: assertNotAlmostEqual
+
 class TestAssertNotAlmostEqual(TestCase):
     def test_simple(self):
         assert round(abs(100-klm), 7) != 0

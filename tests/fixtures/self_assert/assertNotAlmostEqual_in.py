@@ -1,3 +1,5 @@
+# required-method: assertNotAlmostEqual
+
 class TestAssertNotAlmostEqual(TestCase):
     def test_simple(self):
         self.assertNotAlmostEqual(100, klm)

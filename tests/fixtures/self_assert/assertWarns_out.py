@@ -1,3 +1,5 @@
+# required-method: assertWarns
+
 class TestWarns(TestCase):
     def test_simple(self):
         with pytest.warns(RunTimeError):

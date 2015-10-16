@@ -1,3 +1,5 @@
+# required-method: assertMultiLineEqual
+
 class TestMultiLineEqual(TestCase):
     def test_simple(self):
         self.assertMultiLineEqual(100, klm)

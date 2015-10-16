@@ -1,3 +1,5 @@
+# required-method: assertDictEqual
+
 class TestDictEqual(TestCase):
     def test_simple(self):
         self.assertDictEqual(100, klm)

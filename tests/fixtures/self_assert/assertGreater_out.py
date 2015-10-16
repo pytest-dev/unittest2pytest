@@ -1,3 +1,5 @@
+# required-method: assertGreater
+
 class TestAssertGreater(TestCase):
     def test_you(self):
         assert abc > 'xxx'

@@ -1,3 +1,5 @@
+# required-method: assertDictEqual
+
 class TestDictEqual(TestCase):
     def test_simple(self):
         assert 100 == klm

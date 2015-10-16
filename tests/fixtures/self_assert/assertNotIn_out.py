@@ -1,3 +1,5 @@
+# required-method: assertNotIn
+
 class TestAssertNotIn(TestCase):
     def test_you(self):
         assert abc not in 'xxx'

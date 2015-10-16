@@ -1,3 +1,5 @@
+# required-method: assertTupleEqual
+
 class TestTupleEqual(TestCase):
     def test_simple(self):
         self.assertTupleEqual(100, klm)

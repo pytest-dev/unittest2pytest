@@ -34,19 +34,31 @@ import pytest
 
 import os
 from os.path import join, abspath
+import re
+import glob
 import shutil
 from difflib import unified_diff
+import unittest
 
 from lib2to3.main import main
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 
+def requiredTestMethod(name):
+    # skip if TestCase does not have this method
+    is_missing = getattr(unittest.TestCase, name, None) is None
+    return pytest.mark.skipif(is_missing,
+                              reason="unittest does not have TestCase.%s " % name)
+
 
 def _collect_in_files_from_directory(directory):
-    fixture_files = os.listdir(directory)
-    return (abspath(join(directory, fixture_file))
-            for fixture_file in fixture_files
-            if fixture_file.endswith("_in.py"))
+    fixture_files = glob.glob(abspath(join(directory, '*_in.py')))
+    for fixture_file in fixture_files:
+        with open(fixture_file) as fh:
+            text = fh.read(200)
+        l = re.findall(r'^# required-method: (\S+)', text)
+        method = l[0] if l else None
+        yield fixture_file, method
 
 
 def collect_all_test_fixtures():
@@ -54,9 +66,13 @@ def collect_all_test_fixtures():
         # Loop recursively through all files. If the files is in a
         # subdirectory, only run the fixer of the subdirectory name, else run
         # all fixers.
-        for in_file in _collect_in_files_from_directory(root):
+        for in_file, method in _collect_in_files_from_directory(root):
             fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
-            yield (fixer_to_run, in_file)
+            if method:
+                yield requiredTestMethod(method)((fixer_to_run, in_file))
+            else:
+                yield (fixer_to_run, in_file)
+
 
 def _get_id(argvalue):
     if argvalue.startswith(FIXTURE_PATH):

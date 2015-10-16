@@ -1,3 +1,5 @@
+# required-method: assertNotEqual
+
 class TestAssertNotEqual(TestCase):
     def test_you(self):
         self.assertNotEqual(abc, 'xxx')

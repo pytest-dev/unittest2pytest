@@ -1,3 +1,5 @@
+# required-method: assertSequenceEqual
+
 class TestSequenceEqual(TestCase):
     def test_simple(self):
         self.assertSequenceEqual(100, klm)

@@ -1,3 +1,5 @@
+# required-method: assertRaises
+
 class TestRaises(TestCase):
     def test_simple(self):
         self.assertRaises(RunTimeError, someFunc)
