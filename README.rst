@@ -13,7 +13,7 @@ Helps converting unittest test-cases to pytest
 :Homepage:  https://github.com/htgoebel/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/htgoebel/unittest2pytest.png?branch=develop
+.. image:: https://secure.travis-ci.org/htgoebel/unittest2pytest.png?branch=master
    :target: https://travis-ci.org/htgoebel/unittest2pytest/
 
 
