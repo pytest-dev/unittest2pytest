@@ -21,9 +21,10 @@ Helps converting unittest test-cases to pytest
 test-cases into pytest_ test-cases.
 
 In contrast to other similar tools, this `unittest2pytest`
-- handles keyword arguments,
-- handles single-line test-cases and several tests on one line,
-- uses context-handlers where appropriate.
+
+* handles keyword arguments,
+* handles single-line test-cases and several tests on one line,
+* uses context-handlers where appropriate.
 
 This is done by using ``lib2to3`` and Python's mighty ``inspect``
 module.
