@@ -162,14 +162,13 @@ _method_map = {
     'assertNotAlmostEqual': partial(AlmostOp, "!=", ">"),
 
     'assertRaises':         partial(RaisesOp, 'pytest.raises'),
+    'assertWarns':          partial(RaisesOp, 'pytest.warns'), # new Py 3.2
 
-    # new in Python 3.2
-    'assertWarns':          partial(RaisesOp, 'pytest.warns'),
 
     'assertRaisesRegex':   NotImplementedError,
     'assertRegex':   NotImplementedError,
     #'assertWarnsRegex':    're.match(\2, \1)' # new name, py >= 3.2
-    #'assertLogs':
+    #'assertLogs': -- not to be handled here, is an context handler only
 }
 
 
