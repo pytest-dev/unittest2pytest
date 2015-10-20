@@ -126,6 +126,20 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
                  Newline(),
                  suite])
 
+def RaisesRegexOp(context, exceptionClass, expected_regex,
+                  indent, kws, arglist):
+    arglist = [a.clone() for a in arglist.children]
+    del arglist[2:4] # remove pattern and comma
+    arglist = Node(syms.arglist, arglist)
+    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist)
+    with_stmt.insert_child(2, Name('as', prefix=" "))
+    with_stmt.insert_child(3, Name('excinfo', prefix=" "))
+    return Node(syms.suite,
+                [with_stmt,
+                 Newline(),
+                 Name('assert re.search(pattern, excinfo.value)', prefix=indent)
+                 ])
+
 
 _method_map = {
     # simple ones
@@ -167,7 +181,7 @@ _method_map = {
     'assertRegex':          partial(DualOp, 're.search(\2, \1)'),
     'assertNotRegex':       partial(DualOp, 'not re.search(\2, \1)'), # new Py 3.2
 
-    'assertRaisesRegex':   NotImplementedError,
+    'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises'),
     #'assertLogs': -- not to be handled here, is an context handler only
 }
 
@@ -300,7 +314,7 @@ class FixSelfAssert(BaseFix):
 
         required_args, argsdict = utils.resolve_func_args(test_func, posargs, kwargs)
 
-        if method in ('assertRaises', 'assertWarns'):
+        if method.startswith(('assertRaises', 'assertWarns')):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
                                          kws=argsdict,
