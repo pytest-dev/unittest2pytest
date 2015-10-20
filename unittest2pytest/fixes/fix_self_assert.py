@@ -126,18 +126,19 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
                  Newline(),
                  suite])
 
-def RaisesRegexOp(context, exceptionClass, expected_regex,
+def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
                   indent, kws, arglist):
     arglist = [a.clone() for a in arglist.children]
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
     with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist)
     with_stmt.insert_child(2, Name('as', prefix=" "))
-    with_stmt.insert_child(3, Name('excinfo', prefix=" "))
+    with_stmt.insert_child(3, Name(designator, prefix=" "))
     return Node(syms.suite,
                 [with_stmt,
                  Newline(),
-                 Name('assert re.search(pattern, excinfo.value)', prefix=indent)
+                 Name('assert re.search(pattern, %s.value)' % designator,
+                      prefix=indent)
                  ])
 
 
@@ -181,10 +182,11 @@ _method_map = {
     'assertRegex':          partial(DualOp, 're.search(\2, \1)'),
     'assertNotRegex':       partial(DualOp, 'not re.search(\2, \1)'), # new Py 3.2
 
-    'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises'),
+    'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises', 'excinfo'),
+    'assertWarnsRegex':     partial(RaisesRegexOp, 'pytest.warns', 'record'),
+
     #'assertLogs': -- not to be handled here, is an context handler only
 }
-
 
 for newname, oldname in (
         ('assertRaisesRegex', 'assertRaisesRegexp'),
