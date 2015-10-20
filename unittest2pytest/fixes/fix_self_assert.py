@@ -34,10 +34,13 @@ from lib2to3.fixer_util import (
     ArgList, String, Number, syms, token)
 
 from functools import partial
+import re
 import unittest
 
 from .. import utils
 
+
+TEMPLATE_PATTERN = re.compile('[\1\2]|[^\1\2]+')
 
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
@@ -57,19 +60,22 @@ def UnaryOp(prefix, postfix, value, kws):
     return Node(syms.test, kids, prefix=" ")
 
 
-def DualOp(template, first, second, kws):
-    prefix, separator, postfix = template.split('\0')
+def fill_template(template, *args):
+    parts = TEMPLATE_PATTERN.findall(template)
     kids = []
-    if prefix:
-        kids.append(Name(prefix, prefix=" "))
-    first.prefix = ''
-    kids.append(first)
-    if separator:
-        kids.append(Name(separator))
-    second.prefix = ''
-    kids.append(second)
-    if postfix:
-        kids.append(Name(postfix))
+    for p in parts:
+        if p == '':
+            continue
+        elif p in '\1\2\3\4\5':
+            p = args[ord(p)-1]
+            p.prefix = ''
+        else:
+            p = Name(p)
+        kids.append(p)
+    return kids
+
+def DualOp(template, first, second, kws):
+    kids = fill_template(template, first, second)
     return Node(syms.test, kids, prefix=" ")
 
 
@@ -130,14 +136,14 @@ _method_map = {
     'assertGreaterEqual':  partial(CompOp, '>='),
     'assertIn':            partial(CompOp, 'in'),
     'assertIs':            partial(CompOp, 'is'),
-    'assertIsInstance':    partial(DualOp, 'isinstance(\0, \0)'),
+    'assertIsInstance':    partial(DualOp, 'isinstance(\1, \2)'),
     'assertIsNone':        partial(UnaryOp, '', 'is None'),
     'assertIsNot':         partial(CompOp, 'is not'),
     'assertIsNotNone':     partial(UnaryOp, '', 'is not None'),
     'assertLess':          partial(CompOp, '<'),
     'assertLessEqual':     partial(CompOp, '<='),
     'assertNotIn':         partial(CompOp, 'not in'),
-    'assertNotIsInstance': partial(DualOp, 'not isinstance(\0, \0)'),
+    'assertNotIsInstance': partial(DualOp, 'not isinstance(\1, \2)'),
     'assertTrue':          partial(UnaryOp, '', ''),
 
     # types ones
