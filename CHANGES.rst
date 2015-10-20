@@ -1,9 +1,15 @@
 Changelog
 ============
 
-v0.2 (unreleased)
+v0.2 (2015-10-20)
 ---------------------
 
+* Add support assertRegex/assertRegexpMatches, assertNotRegex
+  assertRaisesRegex/assertRaisesRegexp assertWarnsRegex.
+
+* `unittest2pytest` is now a `pytest` subproject.
+
+* Minor fixes.
 
 
 v0.1 (2015-10-16)
