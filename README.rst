@@ -7,23 +7,24 @@ Helps converting unittest test-cases to pytest
 -----------------------------------------------------
 
 :Author:    Hartmut Goebel <h.goebel@crazy-compilers.com>
-:Version:   Version 0.1
+:Version:   Version 0.2
 :Copyright: Hartmut Goebel
 :Licence:   GNU Public Licence v3 or later (GPLv3+)
-:Homepage:  https://github.com/htgoebel/unittest2pytest
+:Homepage:  https://github.com/pytest-dev/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/htgoebel/unittest2pytest.png?branch=master
-   :target: https://travis-ci.org/htgoebel/unittest2pytest/
+.. image:: https://secure.travis-ci.org/pytest-dev/unittest2pytest.png?branch=master
+   :target: https://travis-ci.org/pytest-dev/unittest2pytest/
 
 
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
 test-cases into pytest_ test-cases.
 
 In contrast to other similar tools, this `unittest2pytest`
-- handles keyword arguments,
-- handles single-line test-cases and several tests on one line,
-- uses context-handlers where appropriate.
+
+* handles keyword arguments,
+* handles single-line test-cases and several tests on one line,
+* uses context-handlers where appropriate.
 
 This is done by using ``lib2to3`` and Python's mighty ``inspect``
 module.

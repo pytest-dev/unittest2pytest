@@ -34,10 +34,13 @@ from lib2to3.fixer_util import (
     ArgList, String, Number, syms, token)
 
 from functools import partial
+import re
 import unittest
 
 from .. import utils
 
+
+TEMPLATE_PATTERN = re.compile('[\1\2]|[^\1\2]+')
 
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
@@ -57,19 +60,22 @@ def UnaryOp(prefix, postfix, value, kws):
     return Node(syms.test, kids, prefix=" ")
 
 
-def DualOp(template, first, second, kws):
-    prefix, separator, postfix = template.split('\0')
+def fill_template(template, *args):
+    parts = TEMPLATE_PATTERN.findall(template)
     kids = []
-    if prefix:
-        kids.append(Name(prefix, prefix=" "))
-    first.prefix = ''
-    kids.append(first)
-    if separator:
-        kids.append(Name(separator))
-    second.prefix = ''
-    kids.append(second)
-    if postfix:
-        kids.append(Name(postfix))
+    for p in parts:
+        if p == '':
+            continue
+        elif p in '\1\2\3\4\5':
+            p = args[ord(p)-1]
+            p.prefix = ''
+        else:
+            p = Name(p)
+        kids.append(p)
+    return kids
+
+def DualOp(template, first, second, kws):
+    kids = fill_template(template, first, second)
     return Node(syms.test, kids, prefix=" ")
 
 
@@ -120,6 +126,21 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
                  Newline(),
                  suite])
 
+def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
+                  indent, kws, arglist):
+    arglist = [a.clone() for a in arglist.children]
+    del arglist[2:4] # remove pattern and comma
+    arglist = Node(syms.arglist, arglist)
+    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist)
+    with_stmt.insert_child(2, Name('as', prefix=" "))
+    with_stmt.insert_child(3, Name(designator, prefix=" "))
+    return Node(syms.suite,
+                [with_stmt,
+                 Newline(),
+                 Name('assert re.search(pattern, %s.value)' % designator,
+                      prefix=indent)
+                 ])
+
 
 _method_map = {
     # simple ones
@@ -130,14 +151,14 @@ _method_map = {
     'assertGreaterEqual':  partial(CompOp, '>='),
     'assertIn':            partial(CompOp, 'in'),
     'assertIs':            partial(CompOp, 'is'),
-    'assertIsInstance':    partial(DualOp, 'isinstance(\0, \0)'),
+    'assertIsInstance':    partial(DualOp, 'isinstance(\1, \2)'),
     'assertIsNone':        partial(UnaryOp, '', 'is None'),
     'assertIsNot':         partial(CompOp, 'is not'),
     'assertIsNotNone':     partial(UnaryOp, '', 'is not None'),
     'assertLess':          partial(CompOp, '<'),
     'assertLessEqual':     partial(CompOp, '<='),
     'assertNotIn':         partial(CompOp, 'not in'),
-    'assertNotIsInstance': partial(DualOp, 'not isinstance(\0, \0)'),
+    'assertNotIsInstance': partial(DualOp, 'not isinstance(\1, \2)'),
     'assertTrue':          partial(UnaryOp, '', ''),
 
     # types ones
@@ -156,16 +177,16 @@ _method_map = {
     'assertNotAlmostEqual': partial(AlmostOp, "!=", ">"),
 
     'assertRaises':         partial(RaisesOp, 'pytest.raises'),
+    'assertWarns':          partial(RaisesOp, 'pytest.warns'), # new Py 3.2
 
-    # new in Python 3.2
-    'assertWarns':          partial(RaisesOp, 'pytest.warns'),
+    'assertRegex':          partial(DualOp, 're.search(\2, \1)'),
+    'assertNotRegex':       partial(DualOp, 'not re.search(\2, \1)'), # new Py 3.2
 
-    'assertRaisesRegex':   NotImplementedError,
-    'assertRegex':   NotImplementedError,
-    #'assertWarnsRegex':    're.match(\2, \1)' # new name, py >= 3.2
-    #'assertLogs':
+    'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises', 'excinfo'),
+    'assertWarnsRegex':     partial(RaisesRegexOp, 'pytest.warns', 'record'),
+
+    #'assertLogs': -- not to be handled here, is an context handler only
 }
-
 
 for newname, oldname in (
         ('assertRaisesRegex', 'assertRaisesRegexp'),
@@ -174,8 +195,7 @@ for newname, oldname in (
     if not hasattr(unittest.TestCase, newname):
         # use old name
         _method_map[oldname] = _method_map[newname]
-        del _method_map[oldname]
-
+        del _method_map[newname]
 
 for m in list(_method_map.keys()):
     if not hasattr(unittest.TestCase, m):
@@ -203,6 +223,7 @@ _method_aliases = {
 
 for a, o in list(_method_aliases.items()):
     if not o in _method_map:
+        # if the original name is not a TestCase method, remove the alias
         del _method_aliases[a]
 
 
@@ -295,7 +316,7 @@ class FixSelfAssert(BaseFix):
 
         required_args, argsdict = utils.resolve_func_args(test_func, posargs, kwargs)
 
-        if method in ('assertRaises', 'assertWarns'):
+        if method.startswith(('assertRaises', 'assertWarns')):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
                                          kws=argsdict,

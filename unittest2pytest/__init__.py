@@ -24,4 +24,4 @@ __licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
 
 
 __title__ = 'unittest2pytest'
-__version__ = '0.1'
+__version__ = '0.2'
