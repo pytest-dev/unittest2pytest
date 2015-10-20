@@ -43,7 +43,7 @@ setup(
     long_description=long_description,
     author="Hartmut Goebel",
     author_email="h.goebel@crazy-compilers.com",
-    url="https://github.com/htgoebel/unittest2pytest",
+    url="https://github.com/pytest-dev/unittest2pytest",
     packages=["unittest2pytest", "unittest2pytest.fixes"],
     entry_points={
         'console_scripts': [

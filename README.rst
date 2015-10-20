@@ -10,11 +10,11 @@ Helps converting unittest test-cases to pytest
 :Version:   Version 0.2dev
 :Copyright: Hartmut Goebel
 :Licence:   GNU Public Licence v3 or later (GPLv3+)
-:Homepage:  https://github.com/htgoebel/unittest2pytest
+:Homepage:  https://github.com/pytest-dev/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/htgoebel/unittest2pytest.png?branch=develop
-   :target: https://travis-ci.org/htgoebel/unittest2pytest/
+.. image:: https://secure.travis-ci.org/pytest-dev/unittest2pytest.png?branch=develop
+   :target: https://travis-ci.org/pytest-dev/unittest2pytest/
 
 
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
