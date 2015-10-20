@@ -8,8 +8,8 @@ v0.3 (unreleased)
 v0.2 (2015-10-20)
 ---------------------
 
-* Add support assertRegex/assertRegexpMatches, assertNotRegex
-  assertRaisesRegex/assertRaisesRegexp assertWarnsRegex.
+* Add support for assertRegex/assertRegexpMatches, assertNotRegex,
+  assertRaisesRegex/assertRaisesRegexp, assertWarnsRegex.
 
 * `unittest2pytest` is now a `pytest` subproject.
 
