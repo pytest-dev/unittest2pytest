@@ -164,10 +164,10 @@ _method_map = {
     'assertRaises':         partial(RaisesOp, 'pytest.raises'),
     'assertWarns':          partial(RaisesOp, 'pytest.warns'), # new Py 3.2
 
+    'assertRegex':          partial(DualOp, 're.search(\2, \1)'),
+    'assertNotRegex':       partial(DualOp, 'not re.search(\2, \1)'), # new Py 3.2
 
     'assertRaisesRegex':   NotImplementedError,
-    'assertRegex':   NotImplementedError,
-    #'assertWarnsRegex':    're.match(\2, \1)' # new name, py >= 3.2
     #'assertLogs': -- not to be handled here, is an context handler only
 }
 
