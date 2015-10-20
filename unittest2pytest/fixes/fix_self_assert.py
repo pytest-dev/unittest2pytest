@@ -180,8 +180,7 @@ for newname, oldname in (
     if not hasattr(unittest.TestCase, newname):
         # use old name
         _method_map[oldname] = _method_map[newname]
-        del _method_map[oldname]
-
+        del _method_map[newname]
 
 for m in list(_method_map.keys()):
     if not hasattr(unittest.TestCase, m):
@@ -209,6 +208,7 @@ _method_aliases = {
 
 for a, o in list(_method_aliases.items()):
     if not o in _method_map:
+        # if the original name is not a TestCase method, remove the alias
         del _method_aliases[a]
 
 
