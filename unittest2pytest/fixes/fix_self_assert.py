@@ -109,15 +109,26 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
     arglist = [a.clone() for a in arglist.children[4:]]
     if arglist:
         arglist[0].prefix=""
+
+    func = None
+
     # :fixme: this uses hardcoded parameter names, which may change
     if 'callableObj' in kws:
-        suite = Call(kws['callableObj'], arglist)
+        func = kws['callableObj']
     elif 'callable_obj' in kws:
-        suite = Call(kws['callable_obj'], arglist)
+        func = kws['callable_obj']
     elif kws['args']: # any arguments assigned to `*args`
-        suite = Call(kws['args'][0], arglist)
+        func = kws['args'][0]
     else:
         raise NotImplementedError('with %s is not implemented' % context)
+
+    if func is unittest.case._sentinel:
+        # with self.assertRaises(SomeException):
+        return Node(syms.with_stmt,
+                    [with_item])
+
+    suite = Call(func, arglist)
+
     suite.prefix = indent + (4 * " ")
     return Node(syms.with_stmt,
                 [Name('with'),
@@ -229,16 +240,16 @@ for a, o in list(_method_aliases.items()):
 
 """
 Node(power,
-     [Leaf(1, u'self'), 
+     [Leaf(1, u'self'),
       Node(trailer,
-           [Leaf(23, u'.'), 
+           [Leaf(23, u'.'),
             Leaf(1, u'assertEqual')]),
       Node(trailer,
-           [Leaf(7, u'('), 
-            Node(arglist, 
-                 [Leaf(1, u'abc'), 
-                  Leaf(12, u','), 
-                  Leaf(3, u"'xxx'")]), 
+           [Leaf(7, u'('),
+            Node(arglist,
+                 [Leaf(1, u'abc'),
+                  Leaf(12, u','),
+                  Leaf(3, u"'xxx'")]),
             Leaf(8, u')')])])
 
 Node(power,
@@ -246,19 +257,19 @@ Node(power,
       Node(trailer,
            [Leaf(23, u'.'),
             Leaf(1, u'assertAlmostEqual')]),
-      Node(trailer, 
+      Node(trailer,
            [Leaf(7, u'('),
-            Node(arglist, 
+            Node(arglist,
                  [Leaf(2, u'100'),
                   Leaf(12, u','),
                   Leaf(1, u'klm'),
                   Leaf(12, u','),
-                Node(argument, 
+                Node(argument,
                      [Leaf(1, u'msg'),
                       Leaf(22, u'='),
                       Leaf(3, u'"Message"')]),
                   Leaf(12, u','),
-                  Node(argument, 
+                  Node(argument,
                        [Leaf(1, u'places'),
                         Leaf(22, u'='),
                         Leaf(2, u'1')])]),
@@ -307,7 +318,7 @@ class FixSelfAssert(BaseFix):
                 process_arg(arg)
         else:
             process_arg(results['arglist'])
-        
+
         try:
             test_func = getattr(unittest.TestCase, method)
         except AttributeError:
