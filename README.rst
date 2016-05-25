@@ -75,8 +75,15 @@ A list of the available fixers can be found with the following::
     self_assert
 
 
+Note: if your tests use the context managers ``with self.assertRaises`` or
+``with self.assertWarns``, they will be transformed to ``pytest.raises`` or
+``pytest.warns`` appropriately, but because the semantics are different, any
+use of the output value from the context managers (e.g. the ``x`` in
+``with pytest.raises(ValueError) as x:``) will be wrong and will require
+manual adjustment after the fact.
+
 .. _`lib2to3 documentation`: http://docs.python.org/library/2to3.html
-.. _pytest: http://www.python.org/dev/peps/pep-0008/
+.. _pytest: https://pytest.org/latest/
 
 
 ..

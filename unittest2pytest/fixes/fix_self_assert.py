@@ -109,15 +109,25 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
     arglist = [a.clone() for a in arglist.children[4:]]
     if arglist:
         arglist[0].prefix=""
+
+    func = None
+
     # :fixme: this uses hardcoded parameter names, which may change
     if 'callableObj' in kws:
-        suite = Call(kws['callableObj'], arglist)
+        func = kws['callableObj']
     elif 'callable_obj' in kws:
-        suite = Call(kws['callable_obj'], arglist)
-    elif kws['args']: # any arguments assigned to `*args`
-        suite = Call(kws['args'][0], arglist)
+        func = kws['callable_obj']
+    elif kws['args']:  # any arguments assigned to `*args`
+        func = kws['args'][0]
     else:
-        raise NotImplementedError('with %s is not implemented' % context)
+        func = None
+
+    if func is None:
+        # Context manager
+        return Node(syms.with_stmt, [with_item])
+
+    suite = Call(func, arglist)
+
     suite.prefix = indent + (4 * " ")
     return Node(syms.with_stmt,
                 [Name('with'),
