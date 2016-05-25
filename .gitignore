@@ -42,6 +42,7 @@
 *.egg-link
 
 /nosetests.xml
+/.cache
 /.coverage
 /.tox
 /.achievements
