@@ -24,3 +24,11 @@ class TestSequenceEqual(TestCase):
         # TODO: assert isinstance(klm, list)
         # TODO: assert isinstance(100, list)
         assert klm == 100, "This is wrong!"
+
+    def test_line_wrapping(self):
+        assert [
+                'a',
+                'b'
+            ] == \
+            ['b'], \
+            "This is wrong!"

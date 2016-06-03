@@ -45,7 +45,8 @@ TEMPLATE_PATTERN = re.compile('[\1\2]|[^\1\2]+')
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
     left.prefix = ""
-    right.prefix = " "
+    if '\n' not in right.prefix:
+        right.prefix = " "
     return Node(syms.comparison, (left, op, right), prefix=" ")
 
 
@@ -297,8 +298,11 @@ class FixSelfAssert(BaseFix):
                 assert name.type == token.NAME # what is the symbol for 1?
                 assert equal.type == token.EQUAL # what is the symbol for 1?
                 value = value.clone()
-                value.prefix = " "
                 kwargs[name.value] = value
+                if '\n' in arg.prefix:
+                    value.prefix = arg.prefix
+                else:
+                    value.prefix = arg.prefix.strip() + " "
             else:
                 assert not kwargs, 'all positional args are assumed to come first'
                 posargs.append(arg.clone())
@@ -338,4 +342,15 @@ class FixSelfAssert(BaseFix):
         if argsdict.get('msg', None) is not None:
             n_stmt.children.extend((Name(','), argsdict['msg']))
         n_stmt.prefix = node.prefix
+
+        def fix_line_wrapping(x):
+            for c in x.children:
+                # no need to worry about wrapping of "[", "{" and "("
+                if c.type in [token.LSQB, token.LBRACE, token.LPAR]:
+                    break
+                if c.prefix.startswith('\n'):
+                    c.prefix = c.prefix.replace('\n', ' \\\n')
+                fix_line_wrapping(c)
+        fix_line_wrapping(n_stmt)
+
         return n_stmt
