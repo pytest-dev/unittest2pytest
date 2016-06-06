@@ -18,3 +18,5 @@ class TestSetEqual(TestCase):
             ]) == \
             set(['b']), \
             "This is wrong!"
+
+        assert 100 == klm

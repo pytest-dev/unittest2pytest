@@ -18,6 +18,7 @@ class TestAssertEqual(TestCase):
     def test_line_wrapping(self):
         self.assertEqual(True, False, 'This will fail %s' %
                 'always')
+
         self.assertEqual(
 
                          'abc'

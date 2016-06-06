@@ -19,3 +19,5 @@ class TestSetEqual(TestCase):
             set(['b']),
             "This is wrong!",
         )
+
+        self.assertSetEqual(100, klm)

@@ -19,3 +19,5 @@ class TestDictEqual(TestCase):
             {'b': 2},
             "This is wrong!",
         )
+
+        self.assertDictEqual(100, klm)

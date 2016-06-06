@@ -32,3 +32,5 @@ class TestSequenceEqual(TestCase):
             ] == \
             ['b'], \
             "This is wrong!"
+
+        assert 100 == klm

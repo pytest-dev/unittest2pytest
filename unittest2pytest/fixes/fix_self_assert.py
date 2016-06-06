@@ -341,7 +341,6 @@ class FixSelfAssert(BaseFix):
                            _method_map[method](*required_args, kws=argsdict)])
         if argsdict.get('msg', None) is not None:
             n_stmt.children.extend((Name(','), argsdict['msg']))
-        n_stmt.prefix = node.prefix
 
         def fix_line_wrapping(x):
             for c in x.children:
@@ -352,5 +351,7 @@ class FixSelfAssert(BaseFix):
                     c.prefix = c.prefix.replace('\n', ' \\\n')
                 fix_line_wrapping(c)
         fix_line_wrapping(n_stmt)
+        # the prefix should be set only after fixing line wrapping because it can contain a '\n'
+        n_stmt.prefix = node.prefix
 
         return n_stmt
