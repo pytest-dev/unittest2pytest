@@ -17,3 +17,5 @@ class TestTupleEqual(TestCase):
             ) == \
             ('b',), \
             "This is wrong!"
+
+        assert 100 == klm

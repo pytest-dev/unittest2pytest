@@ -35,3 +35,5 @@ class TestSequenceEqual(TestCase):
             "This is wrong!",
             list
         )
+
+        self.assertSequenceEqual(100, klm)

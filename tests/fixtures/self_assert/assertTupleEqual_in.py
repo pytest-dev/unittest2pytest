@@ -19,3 +19,5 @@ class TestTupleEqual(TestCase):
             ('b',),
             "This is wrong!",
         )
+
+        self.assertTupleEqual(100, klm)

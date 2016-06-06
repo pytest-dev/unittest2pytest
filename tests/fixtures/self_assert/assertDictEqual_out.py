@@ -17,3 +17,5 @@ class TestDictEqual(TestCase):
             } == \
             {'b': 2}, \
             "This is wrong!"
+
+        assert 100 == klm
