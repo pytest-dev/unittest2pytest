@@ -1,5 +1,7 @@
 # required-method: assertWarnsRegex
 
+import pytest
+import re
 class TestWarns(TestCase):
     def test_simple(self):
         with pytest.warns(RunTimeError) as record:

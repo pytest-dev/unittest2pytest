@@ -1,5 +1,7 @@
 # required-method: assertRaisesRegexp
 
+import pytest
+import re
 class TestRaises(TestCase):
     def test_simple(self):
         with pytest.raises(RunTimeError) as excinfo:

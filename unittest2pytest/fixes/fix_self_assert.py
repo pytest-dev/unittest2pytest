@@ -31,7 +31,8 @@ from lib2to3.fixer_base import BaseFix
 from lib2to3.fixer_util import (
     Comma, Name, Call, Node, Leaf,
     Newline, KeywordArg, find_indentation,
-    ArgList, String, Number, syms, token, parenthesize)
+    ArgList, String, Number, syms, token,
+    does_tree_import, is_import, parenthesize)
 
 from functools import partial
 import re
@@ -166,6 +167,53 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
                  Name('assert re.search(pattern, %s.value)' % designator,
                       prefix=indent)
                  ])
+
+
+def add_import(import_name, node):
+    suite = get_parent_of_type(node, syms.suite)
+    test_case = suite
+    while test_case.parent.type != syms.file_input:
+        test_case = test_case.parent
+    file_input = test_case.parent
+
+    if not does_tree_import(None, import_name, node):
+        import_stmt = Node(syms.simple_stmt,
+                           [Node(syms.import_name, [Name('import'), Name(import_name, prefix=' ')]),
+                            Newline(),
+                            ])
+        insert_import(import_stmt, test_case, file_input)
+
+
+def get_parent_of_type(node, node_type):
+    while node:
+        if node.type == node_type:
+            return node
+        node = node.parent
+
+
+def insert_import(import_stmt, test_case, file_input):
+    """This inserts an import in a very similar way as
+    lib2to3.fixer_util.touch_import, but try to maintain encoding and shebang
+    prefixes on top of the file when there is no import"""
+    import_nodes = get_import_nodes(file_input)
+    if import_nodes:
+        last_import_stmt = import_nodes[-1].parent
+        i = file_input.children.index(last_import_stmt) + 1
+    # no import found, so add right before the test case
+    else:
+        i = file_input.children.index(test_case)
+        import_stmt.prefix = test_case.prefix
+        test_case.prefix = ''
+    file_input.insert_child(i, import_stmt)
+
+
+def get_import_nodes(node):
+    return [
+        x for c in node.children
+        for x in c.children
+        if c.type == syms.simple_stmt
+        and is_import(x)
+    ]
 
 
 _method_map = {
@@ -336,7 +384,7 @@ class FixSelfAssert(BaseFix):
                 process_arg(arg)
         else:
             process_arg(results['arglist'])
-        
+
         try:
             test_func = getattr(unittest.TestCase, method)
         except AttributeError:
@@ -368,5 +416,11 @@ class FixSelfAssert(BaseFix):
         fix_line_wrapping(n_stmt)
         # the prefix should be set only after fixing line wrapping because it can contain a '\n'
         n_stmt.prefix = node.prefix
+
+        # add necessary imports
+        if 'Raises' in method or 'Warns' in method:
+            add_import('pytest', node)
+        if 'Regex' in method:
+            add_import('re', node)
 
         return n_stmt
