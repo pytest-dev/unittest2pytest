@@ -118,7 +118,7 @@ def AlmostOp(places_op, delta_op, first, second, kws):
         return CompOp(places_op, round_op, Number(0), {})
 
 
-def RaisesOp(context, exceptionClass, indent, kws, arglist):
+def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     with_item = Call(Name(context), [exceptionClass])
     with_item.prefix = " "
     args = []
@@ -153,19 +153,34 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
                  suite])
 
 def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
-                  indent, kws, arglist):
+                  indent, kws, arglist, node):
     arglist = [a.clone() for a in arglist.children]
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
-    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist)
+    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist, node)
     with_stmt.insert_child(2, Name('as', prefix=" "))
     with_stmt.insert_child(3, Name(designator, prefix=" "))
-    return Node(syms.suite,
-                [with_stmt,
-                 Newline(),
-                 Name('assert re.search(pattern, %s.value)' % designator,
-                      prefix=indent)
-                 ])
+
+    # if this is already part of a with statement we need to insert re.search
+    # after the last leaf with content
+    if node.parent.type == syms.with_stmt:
+        parent_with = node.parent
+        for leaf in reversed(list(parent_with.leaves())):
+            if leaf.value.strip():
+                break
+        i = leaf.parent.children.index(leaf)
+        leaf.parent.insert_child(i + 1, Newline())
+        leaf.parent.insert_child(i + 2,
+                                 Name('assert re.search(pattern, %s.value)' %
+                                      designator, prefix=indent))
+        return with_stmt
+    else:
+        return Node(syms.suite,
+                    [with_stmt,
+                     Newline(),
+                     Name('assert re.search(pattern, %s.value)' % designator,
+                          prefix=indent)
+                     ])
 
 
 _method_map = {
@@ -349,7 +364,8 @@ class FixSelfAssert(BaseFix):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
                                          kws=argsdict,
-                                         arglist=results['arglist'])
+                                         arglist=results['arglist'],
+                                         node=node)
         else:
             n_stmt = Node(syms.assert_stmt,
                           [Name('assert'),
