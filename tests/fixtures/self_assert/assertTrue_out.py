@@ -13,3 +13,8 @@ class TestAssertTrue(TestCase):
     def test_message(self):
         assert 123+z, 'This is wrong!'
         assert xxx+z, error_message
+
+    def test_expression_as_argument(self):
+        assert abc not in self.data
+        assert abc in self.data
+        assert not contains

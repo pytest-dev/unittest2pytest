@@ -28,3 +28,8 @@ class TestAssertEqual(TestCase):
                          'def',
                          msg='Wrap %s' %
                          'everything')
+
+    def test_expression_as_argument(self):
+        self.assertEqual(abc not in self.data, True)
+        self.assertEqual(abc in self.data, not contains)
+        self.assertEqual(contains, not contains)
