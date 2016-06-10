@@ -31,7 +31,7 @@ from lib2to3.fixer_base import BaseFix
 from lib2to3.fixer_util import (
     Comma, Name, Call, Node, Leaf,
     Newline, KeywordArg, find_indentation,
-    ArgList, String, Number, syms, token)
+    ArgList, String, Number, syms, token, parenthesize)
 
 from functools import partial
 import re
@@ -44,6 +44,9 @@ TEMPLATE_PATTERN = re.compile('[\1\2]|[^\1\2]+')
 
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
+    left = parenthesize_expression(left)
+    right = parenthesize_expression(right)
+
     left.prefix = ""
     if '\n' not in right.prefix:
         right.prefix = " "
@@ -51,6 +54,9 @@ def CompOp(op, left, right, kws):
 
 
 def UnaryOp(prefix, postfix, value, kws):
+    if prefix or postfix:
+        value = parenthesize_expression(value)
+
     kids = []
     if prefix:
         kids.append(Name(prefix, prefix=" "))
@@ -59,6 +65,15 @@ def UnaryOp(prefix, postfix, value, kws):
     if postfix:
         kids.append(Name(postfix, prefix=" "))
     return Node(syms.test, kids, prefix=" ")
+
+
+def parenthesize_expression(value):
+    if value.type in [syms.comparison, syms.not_test]:
+        parenthesized = parenthesize(value.clone())
+        parenthesized.prefix = parenthesized.children[1].prefix
+        parenthesized.children[1].prefix = ''
+        value = parenthesized
+    return value
 
 
 def fill_template(template, *args):
