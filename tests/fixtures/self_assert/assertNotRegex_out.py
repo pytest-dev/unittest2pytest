@@ -1,5 +1,6 @@
 # required-method: assertNotRegex
 
+import re
 class TestAssertEqual(TestCase):
     def test_you(self):
         assert not re.search('xxx', abc)

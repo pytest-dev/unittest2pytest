@@ -1,7 +1,17 @@
 # required-method: assertRaises
+import os
+from os import listdir, path
+import subprocess as sb
+import pytest
+
+class Dummy():
+    pass
 
 class TestRaises(TestCase):
     def test_simple(self):
+        import io
+        from io import StringIO, BytesIO
+        import numpy as np
         with pytest.raises(RunTimeError):
             someFunc()
 
