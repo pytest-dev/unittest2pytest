@@ -142,7 +142,10 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
         # Context manager
         return Node(syms.with_stmt, [with_item])
 
-    suite = Call(func, arglist)
+    if func.type == syms.lambdef:
+        suite = func.children[-1].clone()
+    else:
+        suite = Call(func, arglist)
 
     suite.prefix = indent + (4 * " ")
     return Node(syms.with_stmt,

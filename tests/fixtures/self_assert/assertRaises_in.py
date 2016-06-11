@@ -21,3 +21,7 @@ class TestRaises(TestCase):
         with self.assertRaises(RunTimeError) as ctx:
             someFunc()
         assert ctx.exception
+
+    def test_lambda(self):
+        self.assertRaises(RunTimeError, lambda: error(1, 2))
+        self.assertRaises(RunTimeError, lambda: error(1, 2) or error())
