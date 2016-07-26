@@ -1,0 +1,32 @@
+Contributors
+==============
+
+The number im front of each name denotes the number of commits by the
+respective contributor.
+
+
+Contributors for v0.3
+------------------------
+
+     6  Guilherme Quentel Melo <gqmelo@gmail.com>
+     3  Adam Chainz <me@adamj.eu>
+     3  Ronny Pfannschmidt <opensource@ronnypfannschmidt.de>
+     1  Hartmut Goebel <h.goebel@crazy-compilers.com>
+
+
+Contributors for v0.2
+------------------------
+
+    17  Hartmut Goebel <h.goebel@crazy-compilers.com>
+
+
+Contributors for v0.1
+------------------------
+
+    36  Hartmut Goebel <h.goebel@crazy-compilers.com>
+
+..
+ Local Variables:
+ ispell-local-dictionary: "american"
+ coding: utf-8
+ End:
