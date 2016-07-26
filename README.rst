@@ -7,14 +7,15 @@ Helps converting unittest test-cases to pytest
 -----------------------------------------------------
 
 :Author:    Hartmut Goebel <h.goebel@crazy-compilers.com>
-:Version:   Version 0.3.dev
+:Version:   Version 0.3
 :Copyright: Hartmut Goebel
 :Licence:   GNU Public Licence v3 or later (GPLv3+)
 :Homepage:  https://github.com/pytest-dev/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/pytest-dev/unittest2pytest.png?branch=develop
+.. image:: https://img.shields.io/travis/pytest-dev/unittest2pytest/v0.3.svg
    :target: https://travis-ci.org/pytest-dev/unittest2pytest/
+   :alt: Travis CI test status
 
 
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
