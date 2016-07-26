@@ -1,5 +1,6 @@
 # required-method: assertRegex
 
+import re
 class TestAssertEqual(TestCase):
     def test_you(self):
         assert re.search('xxx', abc)

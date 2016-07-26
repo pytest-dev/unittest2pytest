@@ -9,3 +9,15 @@ class TestTupleEqual(TestCase):
 
     def test_simple_msg2(self):
         self.assertTupleEqual(klm, 100, "This is wrong!")
+
+    def test_line_wrapping(self):
+        self.assertTupleEqual(
+            (
+                'a',
+                'b'
+            ),
+            ('b',),
+            "This is wrong!",
+        )
+
+        self.assertTupleEqual(100, klm)

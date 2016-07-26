@@ -14,3 +14,22 @@ class TestAssertEqual(TestCase):
     def test_message(self):
         self.assertEqual(123+z, xxx+y, msg='This is wrong!')
         self.assertEqual(123, xxx+y, 'This is wrong!')
+
+    def test_line_wrapping(self):
+        self.assertEqual(True, False, 'This will fail %s' %
+                'always')
+
+        self.assertEqual(
+
+                         'abc'
+                         .replace(
+                                  'abc'
+                                  , 'def'),
+                         'def',
+                         msg='Wrap %s' %
+                         'everything')
+
+    def test_expression_as_argument(self):
+        self.assertEqual(abc not in self.data, True)
+        self.assertEqual(abc in self.data, not contains)
+        self.assertEqual(contains, not contains)

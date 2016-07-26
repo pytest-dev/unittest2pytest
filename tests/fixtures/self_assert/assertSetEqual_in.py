@@ -9,3 +9,15 @@ class TestSetEqual(TestCase):
 
     def test_simple_msg2(self):
         self.assertSetEqual(klm, 100, "This is wrong!")
+
+    def test_line_wrapping(self):
+        self.assertSetEqual(set(
+            [
+                'a',
+                'b'
+            ]),
+            set(['b']),
+            "This is wrong!",
+        )
+
+        self.assertSetEqual(100, klm)

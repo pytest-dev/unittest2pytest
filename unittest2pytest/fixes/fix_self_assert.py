@@ -31,7 +31,8 @@ from lib2to3.fixer_base import BaseFix
 from lib2to3.fixer_util import (
     Comma, Name, Call, Node, Leaf,
     Newline, KeywordArg, find_indentation,
-    ArgList, String, Number, syms, token)
+    ArgList, String, Number, syms, token,
+    does_tree_import, is_import, parenthesize)
 
 from functools import partial
 import re
@@ -44,12 +45,19 @@ TEMPLATE_PATTERN = re.compile('[\1\2]|[^\1\2]+')
 
 def CompOp(op, left, right, kws):
     op = Name(op, prefix=" ")
+    left = parenthesize_expression(left)
+    right = parenthesize_expression(right)
+
     left.prefix = ""
-    right.prefix = " "
+    if '\n' not in right.prefix:
+        right.prefix = " "
     return Node(syms.comparison, (left, op, right), prefix=" ")
 
 
 def UnaryOp(prefix, postfix, value, kws):
+    if prefix or postfix:
+        value = parenthesize_expression(value)
+
     kids = []
     if prefix:
         kids.append(Name(prefix, prefix=" "))
@@ -58,6 +66,15 @@ def UnaryOp(prefix, postfix, value, kws):
     if postfix:
         kids.append(Name(postfix, prefix=" "))
     return Node(syms.test, kids, prefix=" ")
+
+
+def parenthesize_expression(value):
+    if value.type in [syms.comparison, syms.not_test]:
+        parenthesized = parenthesize(value.clone())
+        parenthesized.prefix = parenthesized.children[1].prefix
+        parenthesized.children[1].prefix = ''
+        value = parenthesized
+    return value
 
 
 def fill_template(template, *args):
@@ -102,22 +119,35 @@ def AlmostOp(places_op, delta_op, first, second, kws):
         return CompOp(places_op, round_op, Number(0), {})
 
 
-def RaisesOp(context, exceptionClass, indent, kws, arglist):
+def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     with_item = Call(Name(context), [exceptionClass])
     with_item.prefix = " "
     args = []
     arglist = [a.clone() for a in arglist.children[4:]]
     if arglist:
         arglist[0].prefix=""
+
+    func = None
+
     # :fixme: this uses hardcoded parameter names, which may change
     if 'callableObj' in kws:
-        suite = Call(kws['callableObj'], arglist)
+        func = kws['callableObj']
     elif 'callable_obj' in kws:
-        suite = Call(kws['callable_obj'], arglist)
-    elif kws['args']: # any arguments assigned to `*args`
-        suite = Call(kws['args'][0], arglist)
+        func = kws['callable_obj']
+    elif kws['args']:  # any arguments assigned to `*args`
+        func = kws['args'][0]
     else:
-        raise NotImplementedError('with %s is not implemented' % context)
+        func = None
+
+    if func is None:
+        # Context manager
+        return Node(syms.with_stmt, [with_item])
+
+    if func.type == syms.lambdef:
+        suite = func.children[-1].clone()
+    else:
+        suite = Call(func, arglist)
+
     suite.prefix = indent + (4 * " ")
     return Node(syms.with_stmt,
                 [Name('with'),
@@ -127,19 +157,81 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist):
                  suite])
 
 def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
-                  indent, kws, arglist):
+                  indent, kws, arglist, node):
     arglist = [a.clone() for a in arglist.children]
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
-    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist)
+    with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist, node)
     with_stmt.insert_child(2, Name('as', prefix=" "))
     with_stmt.insert_child(3, Name(designator, prefix=" "))
-    return Node(syms.suite,
-                [with_stmt,
-                 Newline(),
-                 Name('assert re.search(pattern, %s.value)' % designator,
-                      prefix=indent)
-                 ])
+
+    # if this is already part of a with statement we need to insert re.search
+    # after the last leaf with content
+    if node.parent.type == syms.with_stmt:
+        parent_with = node.parent
+        for leaf in reversed(list(parent_with.leaves())):
+            if leaf.value.strip():
+                break
+        i = leaf.parent.children.index(leaf)
+        leaf.parent.insert_child(i + 1, Newline())
+        leaf.parent.insert_child(i + 2,
+                                 Name('assert re.search(pattern, %s.value)' %
+                                      designator, prefix=indent))
+        return with_stmt
+    else:
+        return Node(syms.suite,
+                    [with_stmt,
+                     Newline(),
+                     Name('assert re.search(pattern, %s.value)' % designator,
+                          prefix=indent)
+                     ])
+
+
+def add_import(import_name, node):
+    suite = get_parent_of_type(node, syms.suite)
+    test_case = suite
+    while test_case.parent.type != syms.file_input:
+        test_case = test_case.parent
+    file_input = test_case.parent
+
+    if not does_tree_import(None, import_name, node):
+        import_stmt = Node(syms.simple_stmt,
+                           [Node(syms.import_name, [Name('import'), Name(import_name, prefix=' ')]),
+                            Newline(),
+                            ])
+        insert_import(import_stmt, test_case, file_input)
+
+
+def get_parent_of_type(node, node_type):
+    while node:
+        if node.type == node_type:
+            return node
+        node = node.parent
+
+
+def insert_import(import_stmt, test_case, file_input):
+    """This inserts an import in a very similar way as
+    lib2to3.fixer_util.touch_import, but try to maintain encoding and shebang
+    prefixes on top of the file when there is no import"""
+    import_nodes = get_import_nodes(file_input)
+    if import_nodes:
+        last_import_stmt = import_nodes[-1].parent
+        i = file_input.children.index(last_import_stmt) + 1
+    # no import found, so add right before the test case
+    else:
+        i = file_input.children.index(test_case)
+        import_stmt.prefix = test_case.prefix
+        test_case.prefix = ''
+    file_input.insert_child(i, import_stmt)
+
+
+def get_import_nodes(node):
+    return [
+        x for c in node.children
+        for x in c.children
+        if c.type == syms.simple_stmt
+        and is_import(x)
+    ]
 
 
 _method_map = {
@@ -287,8 +379,11 @@ class FixSelfAssert(BaseFix):
                 assert name.type == token.NAME # what is the symbol for 1?
                 assert equal.type == token.EQUAL # what is the symbol for 1?
                 value = value.clone()
-                value.prefix = " "
                 kwargs[name.value] = value
+                if '\n' in arg.prefix:
+                    value.prefix = arg.prefix
+                else:
+                    value.prefix = arg.prefix.strip() + " "
             else:
                 assert not kwargs, 'all positional args are assumed to come first'
                 posargs.append(arg.clone())
@@ -307,7 +402,7 @@ class FixSelfAssert(BaseFix):
                 process_arg(arg)
         else:
             process_arg(results['arglist'])
-        
+
         try:
             test_func = getattr(unittest.TestCase, method)
         except AttributeError:
@@ -320,12 +415,31 @@ class FixSelfAssert(BaseFix):
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
                                          kws=argsdict,
-                                         arglist=results['arglist'])
+                                         arglist=results['arglist'],
+                                         node=node)
         else:
             n_stmt = Node(syms.assert_stmt,
                           [Name('assert'),
                            _method_map[method](*required_args, kws=argsdict)])
         if argsdict.get('msg', None) is not None:
             n_stmt.children.extend((Name(','), argsdict['msg']))
+
+        def fix_line_wrapping(x):
+            for c in x.children:
+                # no need to worry about wrapping of "[", "{" and "("
+                if c.type in [token.LSQB, token.LBRACE, token.LPAR]:
+                    break
+                if c.prefix.startswith('\n'):
+                    c.prefix = c.prefix.replace('\n', ' \\\n')
+                fix_line_wrapping(c)
+        fix_line_wrapping(n_stmt)
+        # the prefix should be set only after fixing line wrapping because it can contain a '\n'
         n_stmt.prefix = node.prefix
+
+        # add necessary imports
+        if 'Raises' in method or 'Warns' in method:
+            add_import('pytest', node)
+        if 'Regex' in method:
+            add_import('re', node)
+
         return n_stmt

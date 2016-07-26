@@ -21,8 +21,20 @@
 
 from setuptools import setup
 import codecs
+import re
 import sys
-import unittest2pytest
+
+
+def get_version(filename):
+    """
+    Return package version as listed in `__version__` in `filename`.
+    """
+    init_py = open(filename).read()
+    return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
+
+
+version = get_version('unittest2pytest/__init__.py')
+
 
 def read(filename):
     try:
@@ -38,7 +50,7 @@ if sys.version_info < (3,):
 setup(
     name="unittest2pytest",
     license='GPLv3+',
-    version=unittest2pytest.__version__,
+    version=version,
     description="Convert unittest test-cases to pytest",
     long_description=long_description,
     author="Hartmut Goebel",

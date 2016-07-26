@@ -7,14 +7,15 @@ Helps converting unittest test-cases to pytest
 -----------------------------------------------------
 
 :Author:    Hartmut Goebel <h.goebel@crazy-compilers.com>
-:Version:   Version 0.2
+:Version:   Version 0.3
 :Copyright: Hartmut Goebel
 :Licence:   GNU Public Licence v3 or later (GPLv3+)
 :Homepage:  https://github.com/pytest-dev/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/pytest-dev/unittest2pytest.png?branch=master
+.. image:: https://img.shields.io/travis/pytest-dev/unittest2pytest/v0.3.svg
    :target: https://travis-ci.org/pytest-dev/unittest2pytest/
+   :alt: Travis CI test status
 
 
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
@@ -75,8 +76,15 @@ A list of the available fixers can be found with the following::
     self_assert
 
 
+Note: if your tests use the context managers ``with self.assertRaises`` or
+``with self.assertWarns``, they will be transformed to ``pytest.raises`` or
+``pytest.warns`` appropriately, but because the semantics are different, any
+use of the output value from the context managers (e.g. the ``x`` in
+``with pytest.raises(ValueError) as x:``) will be wrong and will require
+manual adjustment after the fact.
+
 .. _`lib2to3 documentation`: http://docs.python.org/library/2to3.html
-.. _pytest: http://www.python.org/dev/peps/pep-0008/
+.. _pytest: https://pytest.org/latest/
 
 
 ..
