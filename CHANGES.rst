@@ -1,8 +1,14 @@
 Changelog
 ============
 
+v0.4 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
 v0.3 (2016-07-26)
-----------------
+------------------
 
 * Add support for assertRaises / assertWarns context managers.
 
