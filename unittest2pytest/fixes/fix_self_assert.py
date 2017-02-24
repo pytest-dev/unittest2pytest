@@ -120,6 +120,7 @@ def AlmostOp(places_op, delta_op, first, second, kws):
 
 
 def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
+    exceptionClass.prefix = ""
     with_item = Call(Name(context), [exceptionClass])
     with_item.prefix = " "
     args = []
@@ -146,6 +147,9 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     if func.type == syms.lambdef:
         suite = func.children[-1].clone()
     else:
+        # TODO: Newlines within arguments are not handled yet.
+        # If argment prefix contains a newline, all whitespace around this
+        # ought to be replaced by indent plus 4+1+len(func) spaces.
         suite = Call(func, arglist)
 
     suite.prefix = indent + (4 * " ")
