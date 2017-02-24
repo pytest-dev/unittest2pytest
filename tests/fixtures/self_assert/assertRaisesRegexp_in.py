@@ -2,20 +2,20 @@
 
 class TestRaises(TestCase):
     def test_simple(self):
-        self.assertRaisesRegexp(RunTimeError, pattern, someFunc)
+        self.assertRaisesRegexp(RunTimeError, "text .* match", someFunc)
 
     def test_args(self):
-        self.assertRaisesRegexp(RunTimeError, pattern, someFunc, 1,2,3)
+        self.assertRaisesRegexp(RunTimeError, "text .* match", someFunc, 1,2,3)
 
     def test_kwargs(self):
-        self.assertRaisesRegexp(RunTimeError, pattern, someFunc, foo=42, bar=43)
+        self.assertRaisesRegexp(RunTimeError, "text .* match", someFunc, foo=42, bar=43)
 
     def test_context_manager(self):
-        with self.assertRaisesRegexp(RunTimeError, pattern):
+        with self.assertRaisesRegexp(RunTimeError, "text .* match"):
             someFunc('foo', None)
 
     def test_args_kwargs(self):
-        self.assertRaisesRegexp(RunTimeError, pattern, someFunc, 1,2,3, foo=42, bar=43)
+        self.assertRaisesRegexp(RunTimeError, "text .* match", someFunc, 1,2,3, foo=42, bar=43)
 
     def test_lambda(self):
         self.assertRaises(RunTimeError, lambda: error(1, 2))

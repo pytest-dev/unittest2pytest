@@ -159,11 +159,23 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
 def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
                   indent, kws, arglist, node):
     arglist = [a.clone() for a in arglist.children]
+    pattern = arglist[2]
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
     with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist, node)
     with_stmt.insert_child(2, Name('as', prefix=" "))
     with_stmt.insert_child(3, Name(designator, prefix=" "))
+
+    def make_assert(pattern, designator):
+        # Build an assert stmt to match the message like this:
+        #   assert re.search("text .* match", excinfo.value)
+        pattern.prefix = ""
+        node = Node(syms.assert_stmt,
+                    [Name('assert '),
+                     Call(Name('re.search'),
+                          [pattern, Name(', %s.value' % designator)])])
+        node.prefix = indent
+        return node
 
     # if this is already part of a with statement we need to insert re.search
     # after the last leaf with content
@@ -174,17 +186,13 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
                 break
         i = leaf.parent.children.index(leaf)
         leaf.parent.insert_child(i + 1, Newline())
-        leaf.parent.insert_child(i + 2,
-                                 Name('assert re.search(pattern, %s.value)' %
-                                      designator, prefix=indent))
+        leaf.parent.insert_child(i + 2, make_assert(pattern, designator))
         return with_stmt
     else:
         return Node(syms.suite,
                     [with_stmt,
                      Newline(),
-                     Name('assert re.search(pattern, %s.value)' % designator,
-                          prefix=indent)
-                     ])
+                     make_assert(pattern, designator)])
 
 
 def add_import(import_name, node):
