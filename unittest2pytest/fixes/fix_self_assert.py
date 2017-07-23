@@ -389,8 +389,8 @@ class FixSelfAssert(BaseFix):
                   arg.children[1].type == token.EQUAL):
                 # keyword argument
                 name, equal, value = arg.children
-                assert name.type == token.NAME # what is the symbol for 1?
-                assert equal.type == token.EQUAL # what is the symbol for 1?
+                assert name.type == token.NAME
+                assert equal.type == token.EQUAL
                 value = value.clone()
                 kwargs[name.value] = value
                 if '\n' in arg.prefix:
