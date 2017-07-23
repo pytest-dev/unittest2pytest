@@ -18,3 +18,8 @@ class TestAssertFalse(TestCase):
         self.assertFalse(abc not in self.data)
         self.assertFalse(abc in self.data)
         self.assertFalse(not contains)
+
+    def test_generator(self):
+        self.assertFalse((x for x in range(1)))
+        self.assertFalse(x for x in range(1))
+        self.assertFalse((x for x in range(1)), "This is wrong")

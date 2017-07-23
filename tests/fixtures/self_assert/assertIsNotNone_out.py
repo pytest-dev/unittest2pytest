@@ -13,3 +13,8 @@ class TestAssertIsNotNone(TestCase):
     def test_message(self):
         assert 123+z is not None, error_message
         assert xxx+z is not None, 'This is wrong!'
+
+    def test_generator(self):
+        assert (x for x in range(1)) is not None
+        assert (x for x in range(1)) is not None
+        assert (x for x in range(1)) is not None, "This is wrong"

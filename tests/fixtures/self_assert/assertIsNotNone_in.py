@@ -13,3 +13,8 @@ class TestAssertIsNotNone(TestCase):
     def test_message(self):
         self.assertIsNotNone(123+z, msg=error_message)
         self.assertIsNotNone(xxx+z, 'This is wrong!')
+
+    def test_generator(self):
+        self.assertIsNotNone((x for x in range(1)))
+        self.assertIsNotNone(x for x in range(1))
+        self.assertIsNotNone((x for x in range(1)), "This is wrong")

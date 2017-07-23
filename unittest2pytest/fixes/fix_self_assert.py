@@ -385,7 +385,8 @@ class FixSelfAssert(BaseFix):
         def process_arg(arg):
             if isinstance(arg, Leaf) and arg.type == token.COMMA:
                 return
-            elif isinstance(arg, Node) and arg.type == syms.argument:
+            elif (isinstance(arg, Node) and arg.type == syms.argument and
+                  arg.children[1].type == token.EQUAL):
                 # keyword argument
                 name, equal, value = arg.children
                 assert name.type == token.NAME # what is the symbol for 1?
@@ -398,7 +399,16 @@ class FixSelfAssert(BaseFix):
                     value.prefix = arg.prefix.strip() + " "
             else:
                 assert not kwargs, 'all positional args are assumed to come first'
-                posargs.append(arg.clone())
+                if (isinstance(arg, Node) and arg.type == syms.argument and
+                    arg.children[1].type == syms.comp_for):
+                    # argument is a generator expression w/o
+                    # parenthesis, add parenthesis
+                    value = arg.clone()
+                    value.children.insert(0, Leaf(token.LPAR, '('))
+                    value.children.append(Leaf(token.RPAR, ')'))
+                    posargs.append(value)
+                else:
+                    posargs.append(arg.clone())
 
         method = results['method'][0].value
         # map (deprecated) aliases to original to avoid analysing
