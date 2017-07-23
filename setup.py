@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2015 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-1017 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This file is part of unittest2pytest.
 #

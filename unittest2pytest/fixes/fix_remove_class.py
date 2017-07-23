@@ -4,7 +4,7 @@ fix_remove_class - lib2to3 fix for removing "class Testxxx(TestCase):"
 headers and dedenting the contained code.
 """
 #
-# Copyright 2015 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-1017 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This file is part of unittest2pytest.
 #
@@ -23,7 +23,7 @@ headers and dedenting the contained code.
 #
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015 by Hartmut Goebel"
+__copyright__ = "Copyright 2015-1017 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
