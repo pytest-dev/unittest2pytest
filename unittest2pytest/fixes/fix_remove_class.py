@@ -24,7 +24,7 @@ headers and dedenting the contained code.
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
 __copyright__ = "Copyright 2015 by Hartmut Goebel"
-__licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
+__licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 from lib2to3.fixer_base import BaseFix
