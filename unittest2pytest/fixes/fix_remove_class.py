@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-fix_remote_class - lib2to3 fix for removing "class Testxxx(TestCase):"
+fix_remove_class - lib2to3 fix for removing "class Testxxx(TestCase):"
 headers and dedenting the contained code.
 """
 #

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-fix_remote_class - lib2to3 fix for replacing assertXXX() method calls
+fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.
 """
 #
