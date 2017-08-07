@@ -71,4 +71,6 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-    ])
+    ],
+    zip_safe=False
+)
