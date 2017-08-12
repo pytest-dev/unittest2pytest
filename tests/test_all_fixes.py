@@ -100,7 +100,7 @@ def test_check_fixture(in_file, fixer, tmpdir):
         expected_contents = fh.readlines()
 
     if result_file_contents != expected_contents:
-        text = "in_file doesn't match out_file\n"
+        text = "Refactured code doesn't match expected outcome\n"
         text += ''.join(unified_diff(expected_contents, result_file_contents,
                                      'expected', 'refactured result'))
         pytest.fail(text, False)
