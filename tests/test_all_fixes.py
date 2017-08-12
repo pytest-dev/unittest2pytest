@@ -39,8 +39,13 @@ import glob
 import shutil
 from difflib import unified_diff
 import unittest
+import logging
 
 from lib2to3.main import main
+
+# make logging less verbose
+logging.getLogger('lib2to3.main').setLevel(logging.WARN)
+logging.getLogger('RefactoringTool').setLevel(logging.WARN)
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 
