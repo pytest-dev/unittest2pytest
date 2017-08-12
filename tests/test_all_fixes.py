@@ -103,4 +103,4 @@ def test_check_fixture(in_file, fixer, tmpdir):
         text = "in_file doesn't match out_file\n"
         text += ''.join(unified_diff(expected_contents, result_file_contents,
                                      'expected', 'refactured result'))
-        raise AssertionError(text)
+        pytest.fail(text, False)
