@@ -104,6 +104,13 @@ def test_check_fixture(in_file, fixer, tmpdir):
     with open(expected_file) as fh:
         expected_contents = fh.readlines()
 
+    # ensure the expected code is actually correct and compiles
+    try:
+        compile(''.join(expected_contents), expected_file, 'exec')
+    except Exception as e:
+        pytest.fail("FATAL: %s does not compile: %s" % (expected_file, e),
+                    False)
+
     if result_file_contents != expected_contents:
         text = "Refactured code doesn't match expected outcome\n"
         text += ''.join(unified_diff(expected_contents, result_file_contents,
