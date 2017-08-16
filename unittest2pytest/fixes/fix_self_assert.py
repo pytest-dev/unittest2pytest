@@ -273,7 +273,7 @@ _method_map = {
     'assertTupleEqual':     partial(CompOp, '=='),
     'assertSequenceEqual':  SequenceEqual,
 
-    'assertDictContainsSubset': partial(DualOp, 'dict(\1, **\2) == \2'),
+    'assertDictContainsSubset': partial(DualOp, 'dict(\2, **\1) == \2'),
     # :todo:
     #'assertItemsEqual': '', # unordered sequence specific comparison.
 
