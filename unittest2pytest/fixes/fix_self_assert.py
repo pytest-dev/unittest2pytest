@@ -88,7 +88,7 @@ def fill_template(template, *args):
             p.prefix = ''
         else:
             p = Name(p)
-        kids.append(p)
+        kids.append(p.clone())
     return kids
 
 def DualOp(template, first, second, kws):
@@ -273,8 +273,8 @@ _method_map = {
     'assertTupleEqual':     partial(CompOp, '=='),
     'assertSequenceEqual':  SequenceEqual,
 
+    'assertDictContainsSubset': partial(DualOp, 'dict(\1, **\2) == \2'),
     # :todo:
-    #'assertDictContainsSubset': '',
     #'assertItemsEqual': '', # unordered sequence specific comparison.
 
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),
