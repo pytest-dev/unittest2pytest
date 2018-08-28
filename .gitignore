@@ -44,6 +44,7 @@
 /nosetests.xml
 /.cache
 /.coverage
+/.pytest_cache
 /.tox
 /.achievements
 /.installed.cfg

@@ -4,7 +4,11 @@ Changelog
 v0.4 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed assertRaisesRegex, assertRaisesRegexp and assertWarnsRegex.  The regex
+  was getting replaced with an undefined variable `pattern`.
+- Made assertRaisesRegex, assertRaisesRegexp and assertWarnsRegex use the
+  `match` kwarg in `pytest.raises` instead of creating a variable with the
+  context manager and doing an assert on `re.search`.
 
 
 v0.3 (2016-07-26)

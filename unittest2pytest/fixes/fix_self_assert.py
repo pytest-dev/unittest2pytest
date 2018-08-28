@@ -121,7 +121,15 @@ def AlmostOp(places_op, delta_op, first, second, kws):
 
 def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     exceptionClass.prefix = ""
-    with_item = Call(Name(context), [exceptionClass])
+    args = [exceptionClass]
+    # Add match keyword arg to with statement if an expected regex was provided.
+    # In py27 the keyword is `expected_regexp`, in py3 is `expected_regex`
+    if 'expected_regex' in kws or 'expected_regexp' in kws:
+        expected_regex = kws.get('expected_regex', kws.get('expected_regexp'))
+        args.append(String(', '))
+        args.append(
+            KeywordArg(Name('match'), String(expected_regex.value)))
+    with_item = Call(Name(context), args)
     with_item.prefix = " "
     args = []
     arglist = [a.clone() for a in arglist.children[4:]]
@@ -167,19 +175,6 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
     with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist, node)
-    with_stmt.insert_child(2, Name('as', prefix=" "))
-    with_stmt.insert_child(3, Name(designator, prefix=" "))
-
-    def make_assert(pattern, designator):
-        # Build an assert stmt to match the message like this:
-        #   assert re.search("text .* match", excinfo.value)
-        pattern.prefix = ""
-        node = Node(syms.assert_stmt,
-                    [Name('assert '),
-                     Call(Name('re.search'),
-                          [pattern, Name(', %s.value' % designator)])])
-        node.prefix = indent
-        return node
 
     # if this is already part of a with statement we need to insert re.search
     # after the last leaf with content
@@ -189,14 +184,9 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
             if leaf.value.strip():
                 break
         i = leaf.parent.children.index(leaf)
-        leaf.parent.insert_child(i + 1, Newline())
-        leaf.parent.insert_child(i + 2, make_assert(pattern, designator))
         return with_stmt
     else:
-        return Node(syms.suite,
-                    [with_stmt,
-                     Newline(),
-                     make_assert(pattern, designator)])
+        return Node(syms.suite, [with_stmt])
 
 
 def add_import(import_name, node):
@@ -333,16 +323,16 @@ for a, o in list(_method_aliases.items()):
 
 """
 Node(power,
-     [Leaf(1, u'self'), 
+     [Leaf(1, u'self'),
       Node(trailer,
-           [Leaf(23, u'.'), 
+           [Leaf(23, u'.'),
             Leaf(1, u'assertEqual')]),
       Node(trailer,
-           [Leaf(7, u'('), 
-            Node(arglist, 
-                 [Leaf(1, u'abc'), 
-                  Leaf(12, u','), 
-                  Leaf(3, u"'xxx'")]), 
+           [Leaf(7, u'('),
+            Node(arglist,
+                 [Leaf(1, u'abc'),
+                  Leaf(12, u','),
+                  Leaf(3, u"'xxx'")]),
             Leaf(8, u')')])])
 
 Node(power,
@@ -350,19 +340,19 @@ Node(power,
       Node(trailer,
            [Leaf(23, u'.'),
             Leaf(1, u'assertAlmostEqual')]),
-      Node(trailer, 
+      Node(trailer,
            [Leaf(7, u'('),
-            Node(arglist, 
+            Node(arglist,
                  [Leaf(2, u'100'),
                   Leaf(12, u','),
                   Leaf(1, u'klm'),
                   Leaf(12, u','),
-                Node(argument, 
+                Node(argument,
                      [Leaf(1, u'msg'),
                       Leaf(22, u'='),
                       Leaf(3, u'"Message"')]),
                   Leaf(12, u','),
-                  Node(argument, 
+                  Node(argument,
                        [Leaf(1, u'places'),
                         Leaf(22, u'='),
                         Leaf(2, u'1')])]),
@@ -461,7 +451,8 @@ class FixSelfAssert(BaseFix):
         # add necessary imports
         if 'Raises' in method or 'Warns' in method:
             add_import('pytest', node)
-        if 'Regex' in method:
+        if ('Regex' in method and not 'Raises' in method and
+                not 'Warns' in method):
             add_import('re', node)
 
         return n_stmt
