@@ -1,6 +1,7 @@
 language: python
 # Use new container-based Travis infrastructure.
 sudo: false
+cache: pip
 
 python:
   - 2.7
