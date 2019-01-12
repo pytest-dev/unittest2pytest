@@ -73,14 +73,14 @@ def collect_all_test_fixtures():
         # all fixers.
         for in_file, method in _collect_in_files_from_directory(root):
             fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
+            marks = []
             if method:
-                yield requiredTestMethod(method)((fixer_to_run, in_file))
-            else:
-                yield (fixer_to_run, in_file)
+                marks.append(requiredTestMethod(method))
+            yield pytest.param(fixer_to_run, in_file, marks=marks)
 
 
 def _get_id(argvalue):
-    if argvalue.startswith(FIXTURE_PATH):
+    if argvalue is not None and argvalue.startswith(FIXTURE_PATH):
         return os.path.basename(argvalue).replace("_in.py", "")
 
 
