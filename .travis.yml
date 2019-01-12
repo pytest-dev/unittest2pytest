@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 # Use new container-based Travis infrastructure.
 sudo: false
@@ -7,10 +8,11 @@ python:
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
   - "nightly"
 
 allow_failures:
-  # Just tests how PyInstaller performs with upcoming Python 3.6
+  # Just tests how PyInstaller performs with upcoming Python 3.8
   - python: "nightly"
 
 # Install dependencies.
