@@ -125,10 +125,11 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     # Add match keyword arg to with statement if an expected regex was provided.
     # In py27 the keyword is `expected_regexp`, in py3 is `expected_regex`
     if 'expected_regex' in kws or 'expected_regexp' in kws:
-        expected_regex = kws.get('expected_regex', kws.get('expected_regexp'))
+        expected_regex = kws.get('expected_regex', kws.get('expected_regexp')).clone()
+        expected_regex.prefix = ''
         args.append(String(', '))
         args.append(
-            KeywordArg(Name('match'), String(expected_regex.value)))
+            KeywordArg(Name('match'), expected_regex))
     with_item = Call(Name(context), args)
     with_item.prefix = " "
     args = []
