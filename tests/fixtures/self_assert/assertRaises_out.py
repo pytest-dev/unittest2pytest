@@ -53,3 +53,8 @@ class TestRaises(TestCase):
             error(1, 2)
         with pytest.raises(RunTimeError):
             error(1, 2) or error()
+
+    def test_kwargs(self):
+        kwargs = {}
+        with pytest.raises(RunTimeError):
+            someFunc(**kwargs)

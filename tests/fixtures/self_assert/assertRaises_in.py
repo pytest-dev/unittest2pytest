@@ -48,3 +48,7 @@ class TestRaises(TestCase):
     def test_lambda(self):
         self.assertRaises(RunTimeError, lambda: error(1, 2))
         self.assertRaises(RunTimeError, lambda: error(1, 2) or error())
+
+    def test_kwargs(self):
+        kwargs = {}
+        self.assertRaises(RunTimeError, someFunc, **kwargs)
