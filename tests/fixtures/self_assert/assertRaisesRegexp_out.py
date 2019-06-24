@@ -39,3 +39,7 @@ class TestRaises(TestCase):
             error(1, 2)
         with pytest.raises(RunTimeError):
             error(1, 2) or error()
+
+    def test_atom(self):
+        with pytest.raises(RunTimeError, match=("foo" "bar")):
+            someFunc(1,2,3)
