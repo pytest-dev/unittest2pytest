@@ -1,6 +1,5 @@
 # For running tests
-pytest >= 2.7.2  # Testing framework.
-pytest-catchlog  # Capture log output separately from stdout/stderr
+pytest >= 3.3.0  # Testing framework.
 
 # Helper tools
 zest.releaser # Makes releasing easier
