@@ -6,6 +6,9 @@ class TestAssertTrue(TestCase):
 
     def test_me(self):
         assert xxx+y
+        assert aaa and bbb
+        assert ccc or ddd
+        assert True if You else False
 
     def test_everybody(self):
         assert 'abc'
@@ -18,3 +21,8 @@ class TestAssertTrue(TestCase):
         assert abc not in self.data
         assert abc in self.data
         assert not contains
+
+    def test_generator(self):
+        assert (x for x in range(1))
+        assert (x for x in range(1))
+        assert (x for x in range(1)), "This is wrong"

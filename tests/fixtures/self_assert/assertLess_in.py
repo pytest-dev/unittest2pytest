@@ -6,6 +6,9 @@ class TestAssertLess(TestCase):
 
     def test_me(self):
         self.assertLess(123, xxx+y)
+        self.assertLess(456, aaa and bbb)
+        self.assertLess(789, ccc or ddd)
+        self.assertLess(123, True if You else False)
 
     def test_everybody(self):
         self.assertLess(   'abc'   ,    'def'   )

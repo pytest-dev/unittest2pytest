@@ -3,6 +3,9 @@
 class TestAssertNotAlmostEqual(TestCase):
     def test_simple(self):
         self.assertNotAlmostEqual(100, klm)
+        self.assertNotAlmostEqual(456, aaa and bbb)
+        self.assertNotAlmostEqual(789, ccc or ddd)
+        self.assertNotAlmostEqual(123, True if You else False)
 
     def test_simple_msg(self):
         self.assertNotAlmostEqual(klm, 50+x, msg="This is wrong!")

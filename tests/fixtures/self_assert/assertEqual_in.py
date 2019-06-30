@@ -7,6 +7,9 @@ class TestAssertEqual(TestCase):
 
     def test_me(self):
         self.assertEqual(123, xxx+y)
+        self.assertEqual(456, aaa and bbb)
+        self.assertEqual(789, ccc or ddd)
+        self.assertEqual(123, True if You else False)
 
     def test_everybody(self):
         self.assertEqual(   'abc'   ,    'def'   )

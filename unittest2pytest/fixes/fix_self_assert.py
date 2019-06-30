@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-fix_remote_class - lib2to3 fix for replacing assertXXX() method calls
+fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.
 """
 #
-# Copyright 2015 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This file is part of unittest2pytest.
 #
@@ -23,8 +23,8 @@ by their pytest equivalent.
 #
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015 by Hartmut Goebel"
-__licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
+__copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
+__licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 from lib2to3.fixer_base import BaseFix
@@ -68,8 +68,19 @@ def UnaryOp(prefix, postfix, value, kws):
     return Node(syms.test, kids, prefix=" ")
 
 
+# These symbols have lower precedence than the CompOps we use and thus
+# need to be parenthesized. For datails see
+# https://docs.python.org/3/reference/expressions.html#operator-precedence
+_NEEDS_PARENTHESIS = [
+    syms.test,  # if – else
+    syms.or_test,
+    syms.and_test,
+    syms.not_test,
+    syms.comparison,
+]
+
 def parenthesize_expression(value):
-    if value.type in [syms.comparison, syms.not_test]:
+    if value.type in _NEEDS_PARENTHESIS:
         parenthesized = parenthesize(value.clone())
         parenthesized.prefix = parenthesized.children[1].prefix
         parenthesized.children[1].prefix = ''
@@ -88,7 +99,7 @@ def fill_template(template, *args):
             p.prefix = ''
         else:
             p = Name(p)
-        kids.append(p)
+        kids.append(p.clone())
     return kids
 
 def DualOp(template, first, second, kws):
@@ -106,6 +117,8 @@ def SequenceEqual(left, right, kws):
 def AlmostOp(places_op, delta_op, first, second, kws):
     first.prefix =  ""
     second.prefix = ""
+    first = parenthesize_expression(first)
+    second = parenthesize_expression(second)
     abs_op = Call(Name('abs'),
                   [Node(syms.factor, [first, Name('-'), second])])
     if kws.get('delta', None) is not None:
@@ -120,7 +133,17 @@ def AlmostOp(places_op, delta_op, first, second, kws):
 
 
 def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
-    with_item = Call(Name(context), [exceptionClass])
+    exceptionClass.prefix = ""
+    args = [exceptionClass]
+    # Add match keyword arg to with statement if an expected regex was provided.
+    # In py27 the keyword is `expected_regexp`, in py3 is `expected_regex`
+    if 'expected_regex' in kws or 'expected_regexp' in kws:
+        expected_regex = kws.get('expected_regex', kws.get('expected_regexp')).clone()
+        expected_regex.prefix = ''
+        args.append(String(', '))
+        args.append(
+            KeywordArg(Name('match'), expected_regex))
+    with_item = Call(Name(context), args)
     with_item.prefix = " "
     args = []
     arglist = [a.clone() for a in arglist.children[4:]]
@@ -146,6 +169,9 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     if func.type == syms.lambdef:
         suite = func.children[-1].clone()
     else:
+        # TODO: Newlines within arguments are not handled yet.
+        # If argment prefix contains a newline, all whitespace around this
+        # ought to be replaced by indent plus 4+1+len(func) spaces.
         suite = Call(func, arglist)
 
     suite.prefix = indent + (4 * " ")
@@ -159,11 +185,10 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
 def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
                   indent, kws, arglist, node):
     arglist = [a.clone() for a in arglist.children]
+    pattern = arglist[2]
     del arglist[2:4] # remove pattern and comma
     arglist = Node(syms.arglist, arglist)
     with_stmt = RaisesOp(context, exceptionClass, indent, kws, arglist, node)
-    with_stmt.insert_child(2, Name('as', prefix=" "))
-    with_stmt.insert_child(3, Name(designator, prefix=" "))
 
     # if this is already part of a with statement we need to insert re.search
     # after the last leaf with content
@@ -173,18 +198,9 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
             if leaf.value.strip():
                 break
         i = leaf.parent.children.index(leaf)
-        leaf.parent.insert_child(i + 1, Newline())
-        leaf.parent.insert_child(i + 2,
-                                 Name('assert re.search(pattern, %s.value)' %
-                                      designator, prefix=indent))
         return with_stmt
     else:
-        return Node(syms.suite,
-                    [with_stmt,
-                     Newline(),
-                     Name('assert re.search(pattern, %s.value)' % designator,
-                          prefix=indent)
-                     ])
+        return Node(syms.suite, [with_stmt])
 
 
 def add_import(import_name, node):
@@ -261,8 +277,8 @@ _method_map = {
     'assertTupleEqual':     partial(CompOp, '=='),
     'assertSequenceEqual':  SequenceEqual,
 
+    'assertDictContainsSubset': partial(DualOp, 'dict(\2, **\1) == \2'),
     # :todo:
-    #'assertDictContainsSubset': '',
     #'assertItemsEqual': '', # unordered sequence specific comparison.
 
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),
@@ -321,16 +337,16 @@ for a, o in list(_method_aliases.items()):
 
 """
 Node(power,
-     [Leaf(1, u'self'), 
+     [Leaf(1, u'self'),
       Node(trailer,
-           [Leaf(23, u'.'), 
+           [Leaf(23, u'.'),
             Leaf(1, u'assertEqual')]),
       Node(trailer,
-           [Leaf(7, u'('), 
-            Node(arglist, 
-                 [Leaf(1, u'abc'), 
-                  Leaf(12, u','), 
-                  Leaf(3, u"'xxx'")]), 
+           [Leaf(7, u'('),
+            Node(arglist,
+                 [Leaf(1, u'abc'),
+                  Leaf(12, u','),
+                  Leaf(3, u"'xxx'")]),
             Leaf(8, u')')])])
 
 Node(power,
@@ -338,19 +354,19 @@ Node(power,
       Node(trailer,
            [Leaf(23, u'.'),
             Leaf(1, u'assertAlmostEqual')]),
-      Node(trailer, 
+      Node(trailer,
            [Leaf(7, u'('),
-            Node(arglist, 
+            Node(arglist,
                  [Leaf(2, u'100'),
                   Leaf(12, u','),
                   Leaf(1, u'klm'),
                   Leaf(12, u','),
-                Node(argument, 
+                Node(argument,
                      [Leaf(1, u'msg'),
                       Leaf(22, u'='),
                       Leaf(3, u'"Message"')]),
                   Leaf(12, u','),
-                  Node(argument, 
+                  Node(argument,
                        [Leaf(1, u'places'),
                         Leaf(22, u'='),
                         Leaf(2, u'1')])]),
@@ -373,11 +389,12 @@ class FixSelfAssert(BaseFix):
         def process_arg(arg):
             if isinstance(arg, Leaf) and arg.type == token.COMMA:
                 return
-            elif isinstance(arg, Node) and arg.type == syms.argument:
+            elif (isinstance(arg, Node) and arg.type == syms.argument and
+                  arg.children[1].type == token.EQUAL):
                 # keyword argument
                 name, equal, value = arg.children
-                assert name.type == token.NAME # what is the symbol for 1?
-                assert equal.type == token.EQUAL # what is the symbol for 1?
+                assert name.type == token.NAME
+                assert equal.type == token.EQUAL
                 value = value.clone()
                 kwargs[name.value] = value
                 if '\n' in arg.prefix:
@@ -385,8 +402,20 @@ class FixSelfAssert(BaseFix):
                 else:
                     value.prefix = arg.prefix.strip() + " "
             else:
+                if (isinstance(arg, Node) and arg.type == syms.argument and
+                    arg.children[0].type == 36 and arg.children[0].value == '**'):
+                    return
                 assert not kwargs, 'all positional args are assumed to come first'
-                posargs.append(arg.clone())
+                if (isinstance(arg, Node) and arg.type == syms.argument and
+                    arg.children[1].type == syms.comp_for):
+                    # argument is a generator expression w/o
+                    # parenthesis, add parenthesis
+                    value = arg.clone()
+                    value.children.insert(0, Leaf(token.LPAR, '('))
+                    value.children.append(Leaf(token.RPAR, ')'))
+                    posargs.append(value)
+                else:
+                    posargs.append(arg.clone())
 
         method = results['method'][0].value
         # map (deprecated) aliases to original to avoid analysing
@@ -439,7 +468,8 @@ class FixSelfAssert(BaseFix):
         # add necessary imports
         if 'Raises' in method or 'Warns' in method:
             add_import('pytest', node)
-        if 'Regex' in method:
+        if ('Regex' in method and not 'Raises' in method and
+                not 'Warns' in method):
             add_import('re', node)
 
         return n_stmt

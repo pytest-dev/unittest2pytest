@@ -6,6 +6,9 @@ class TestAssertIn(TestCase):
 
     def test_me(self):
         assert 123 in xxx+y
+        assert 456 in (aaa and bbb)
+        assert 789 in (ccc or ddd)
+        assert 123 in (True if You else False)
 
     def test_everybody(self):
         assert 'abc' in 'def'

@@ -4,7 +4,7 @@
 This file is part of test-suite for unittest2pytest.
 """
 #
-# Copyright 2015 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This program is part of unittest2pytest.
 #
@@ -25,7 +25,7 @@ This file is part of test-suite for unittest2pytest.
 from __future__ import unicode_literals
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015 by Hartmut Goebel"
+__copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
@@ -39,8 +39,13 @@ import glob
 import shutil
 from difflib import unified_diff
 import unittest
+import logging
 
 from lib2to3.main import main
+
+# make logging less verbose
+logging.getLogger('lib2to3.main').setLevel(logging.WARN)
+logging.getLogger('RefactoringTool').setLevel(logging.WARN)
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 
@@ -68,14 +73,14 @@ def collect_all_test_fixtures():
         # all fixers.
         for in_file, method in _collect_in_files_from_directory(root):
             fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
+            marks = []
             if method:
-                yield requiredTestMethod(method)((fixer_to_run, in_file))
-            else:
-                yield (fixer_to_run, in_file)
+                marks.append(requiredTestMethod(method))
+            yield pytest.param(fixer_to_run, in_file, marks=marks)
 
 
 def _get_id(argvalue):
-    if argvalue.startswith(FIXTURE_PATH):
+    if argvalue is not None and argvalue.startswith(FIXTURE_PATH):
         return os.path.basename(argvalue).replace("_in.py", "")
 
 
@@ -99,8 +104,15 @@ def test_check_fixture(in_file, fixer, tmpdir):
     with open(expected_file) as fh:
         expected_contents = fh.readlines()
 
+    # ensure the expected code is actually correct and compiles
+    try:
+        compile(''.join(expected_contents), expected_file, 'exec')
+    except Exception as e:
+        pytest.fail("FATAL: %s does not compile: %s" % (expected_file, e),
+                    False)
+
     if result_file_contents != expected_contents:
-        text = "in_file doesn't match out_file\n"
+        text = "Refactured code doesn't match expected outcome\n"
         text += ''.join(unified_diff(expected_contents, result_file_contents,
                                      'expected', 'refactured result'))
-        raise AssertionError(text)
+        pytest.fail(text, False)

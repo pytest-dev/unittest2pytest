@@ -7,6 +7,9 @@ class TestAssertNotEqual(TestCase):
 
     def test_me(self):
         assert 123 != xxx+y
+        assert 456 != (aaa and bbb)
+        assert 789 != (ccc or ddd)
+        assert 123 != (True if You else False)
 
     def test_everybody(self):
         assert 'abc' != 'def'

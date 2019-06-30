@@ -3,6 +3,9 @@
 class TestDictEqual(TestCase):
     def test_simple(self):
         self.assertDictEqual(100, klm)
+        self.assertDictEqual(456, aaa and bbb)
+        self.assertDictEqual(789, ccc or ddd)
+        self.assertDictEqual(123, True if You else False)
 
     def test_simple_msg(self):
         self.assertDictEqual(klm, 100, msg="This is wrong!")

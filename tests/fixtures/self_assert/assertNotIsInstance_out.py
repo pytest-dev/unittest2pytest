@@ -6,6 +6,9 @@ class TestAssertNotIsInstance(TestCase):
 
     def test_me(self):
         assert not isinstance(123, xxx+y)
+        assert not isinstance(456, aaa and bbb)
+        assert not isinstance(789, ccc or ddd)
+        assert not isinstance(123, True if You else False)
 
     def test_everybody(self):
         assert not isinstance('abc', 'def')

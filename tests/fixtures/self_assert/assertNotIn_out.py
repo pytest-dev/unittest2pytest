@@ -6,6 +6,9 @@ class TestAssertNotIn(TestCase):
 
     def test_me(self):
         assert 123 not in xxx+y
+        assert 456 not in (aaa and bbb)
+        assert 789 not in (ccc or ddd)
+        assert 123 not in (True if You else False)
 
     def test_everybody(self):
         assert 'abc' not in 'def'

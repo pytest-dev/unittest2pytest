@@ -3,6 +3,9 @@
 class TestAlmostAssertEqual(TestCase):
     def test_simple(self):
         self.assertAlmostEqual(100, klm)
+        self.assertAlmostEqual(456, aaa and bbb)
+        self.assertAlmostEqual(789, ccc or ddd)
+        self.assertAlmostEqual(123, True if You else False)
 
     def test_simple_msg(self):
         self.assertAlmostEqual(klm, 100, msg="This is wrong!")

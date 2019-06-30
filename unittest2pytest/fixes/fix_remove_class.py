@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-fix_remote_class - lib2to3 fix for removing "class Testxxx(TestCase):"
+fix_remove_class - lib2to3 fix for removing "class Testxxx(TestCase):"
 headers and dedenting the contained code.
 """
 #
-# Copyright 2015 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This file is part of unittest2pytest.
 #
@@ -23,8 +23,8 @@ headers and dedenting the contained code.
 #
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015 by Hartmut Goebel"
-__licence__ = "GNU General Public License version 3 ot later (GPLv3+)"
+__copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
+__licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 from lib2to3.fixer_base import BaseFix
