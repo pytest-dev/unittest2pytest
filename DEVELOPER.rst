@@ -131,20 +131,21 @@ Now we start with the main release process.
           git merge --no-ff -X theirs -m "Finished release $version." \
              release/$version
 
-    b. Tag and sign the release (we are using prefix ``v``)::
+    b. In case of a merge-conflict, resolve it using::
 
-        git tag -s v$version -m "unittest2pytest $version"
+	 git gui # In the context-menu select "Use Local Version"
+	 git commit -m "Release $version."
 
 
 13. Run the release script ``release`` and it will do:
 
-    - create another (unsigned) tag for the released version
-    - create and sign source archives and uploads them to PyPI
+    - create a signed tag for the released version
+    - create and sign source archives
+    - uploads them to PyPI
 
     ::
 
       release # zest.releaser command
-      git tag -d $version  # delete the additional tag
 
     Submit to `testpypi` first! You can not change any file after
     you've uploaded it to PyPI!
