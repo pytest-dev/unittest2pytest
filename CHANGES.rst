@@ -1,8 +1,8 @@
 Changelog
 ============
 
-v0.4 (unreleased)
------------------
+0.4 (2019-06-30)
+----------------
 
 - Fixed assertRaisesRegex, assertRaisesRegexp and assertWarnsRegex.  The regex
   was getting replaced with an undefined variable `pattern`.
