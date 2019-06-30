@@ -4,7 +4,7 @@
 This file is part of test-suite for unittest2pytest.
 """
 #
-# Copyright 2015-1017 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This program is part of unittest2pytest.
 #
@@ -25,7 +25,7 @@ This file is part of test-suite for unittest2pytest.
 from __future__ import unicode_literals
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015-1017 by Hartmut Goebel"
+__copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 

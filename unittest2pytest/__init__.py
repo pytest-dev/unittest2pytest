@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2015-1017 by Hartmut Goebel <h.goebel@crazy-compilers.com>
+# Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
 # This file is part of unittest2pytest.
 #
@@ -19,9 +19,9 @@
 #
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
-__copyright__ = "Copyright 2015-1017 by Hartmut Goebel"
+__copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 __title__ = 'unittest2pytest'
-__version__ = '0.4.dev0'
+__version__ = '0.5.dev0'

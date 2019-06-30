@@ -4,6 +4,15 @@ Contributors
 The number im front of each name denotes the number of commits by the
 respective contributor.
 
+Contributors for v0.4
+------------------------
+
+    25  Hartmut Goebel <h.goebel@crazy-compilers.com>
+     6  Jon Dufresne <jon.dufresne@gmail.com>
+     2  Thomas Grainger <tagrain@gmail.com>
+     1  Aaron Godfrey <aaronjg@gmail.com>
+     1  Joshua Howard <joshthoward@gmail.com>
+
 
 Contributors for v0.3
 ------------------------
