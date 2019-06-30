@@ -39,3 +39,6 @@ class TestRaises(TestCase):
 
     def test_atom(self):
         self.assertRaisesRegexp(RunTimeError, ("foo" "bar"), someFunc, 1,2,3)
+
+    def test_expr(self):
+        self.assertRaisesRegexp(RunTimeError, "foo" + "bar", someFunc, 1,2,3)

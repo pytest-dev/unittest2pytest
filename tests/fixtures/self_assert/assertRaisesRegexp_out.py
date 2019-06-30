@@ -43,3 +43,7 @@ class TestRaises(TestCase):
     def test_atom(self):
         with pytest.raises(RunTimeError, match=("foo" "bar")):
             someFunc(1,2,3)
+
+    def test_expr(self):
+        with pytest.raises(RunTimeError, match="foo" + "bar"):
+            someFunc(1,2,3)
