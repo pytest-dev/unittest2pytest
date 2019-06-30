@@ -388,6 +388,9 @@ class FixSelfAssert(BaseFix):
                 else:
                     value.prefix = arg.prefix.strip() + " "
             else:
+                if (isinstance(arg, Node) and arg.type == syms.argument and
+                    arg.children[0].type == 36 and arg.children[0].value == '**'):
+                    return
                 assert not kwargs, 'all positional args are assumed to come first'
                 if (isinstance(arg, Node) and arg.type == syms.argument and
                     arg.children[1].type == syms.comp_for):
