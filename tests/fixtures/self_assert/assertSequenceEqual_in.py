@@ -3,6 +3,9 @@
 class TestSequenceEqual(TestCase):
     def test_simple(self):
         self.assertSequenceEqual(100, klm)
+        self.assertSequenceEqual(456, aaa and bbb)
+        self.assertSequenceEqual(789, ccc or ddd)
+        self.assertSequenceEqual(123, True if You else False)
 
     def test_simple_msg(self):
         self.assertSequenceEqual(klm, 100, msg="This is wrong!")

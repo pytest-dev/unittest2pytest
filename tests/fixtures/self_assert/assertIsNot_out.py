@@ -6,6 +6,9 @@ class TestAssertIsNot(TestCase):
 
     def test_me(self):
         assert 123 is not xxx+y
+        assert 456 is not (aaa and bbb)
+        assert 789 is not (ccc or ddd)
+        assert 123 is not (True if You else False)
 
     def test_everybody(self):
         assert 'abc' is not 'def'

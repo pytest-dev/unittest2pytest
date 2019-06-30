@@ -6,6 +6,9 @@ class TestAssertFalse(TestCase):
 
     def test_me(self):
         self.assertFalse(xxx+y)
+        self.assertFalse(aaa and bbb)
+        self.assertFalse(ccc or ddd)
+        self.assertFalse(True if You else False)
 
     def test_everybody(self):
         self.assertFalse(    'def'   )

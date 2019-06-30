@@ -68,8 +68,19 @@ def UnaryOp(prefix, postfix, value, kws):
     return Node(syms.test, kids, prefix=" ")
 
 
+# These symbols have lower precedence than the CompOps we use and thus
+# need to be parenthesized. For datails see
+# https://docs.python.org/3/reference/expressions.html#operator-precedence
+_NEEDS_PARENTHESIS = [
+    syms.test,  # if – else
+    syms.or_test,
+    syms.and_test,
+    syms.not_test,
+    syms.comparison,
+]
+
 def parenthesize_expression(value):
-    if value.type in [syms.comparison, syms.not_test]:
+    if value.type in _NEEDS_PARENTHESIS:
         parenthesized = parenthesize(value.clone())
         parenthesized.prefix = parenthesized.children[1].prefix
         parenthesized.children[1].prefix = ''
@@ -106,6 +117,8 @@ def SequenceEqual(left, right, kws):
 def AlmostOp(places_op, delta_op, first, second, kws):
     first.prefix =  ""
     second.prefix = ""
+    first = parenthesize_expression(first)
+    second = parenthesize_expression(second)
     abs_op = Call(Name('abs'),
                   [Node(syms.factor, [first, Name('-'), second])])
     if kws.get('delta', None) is not None:

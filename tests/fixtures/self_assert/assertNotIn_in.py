@@ -6,6 +6,9 @@ class TestAssertNotIn(TestCase):
 
     def test_me(self):
         self.assertNotIn(123, xxx+y)
+        self.assertNotIn(456, aaa and bbb)
+        self.assertNotIn(789, ccc or ddd)
+        self.assertNotIn(123, True if You else False)
 
     def test_everybody(self):
         self.assertNotIn(   'abc'   ,    'def'   )

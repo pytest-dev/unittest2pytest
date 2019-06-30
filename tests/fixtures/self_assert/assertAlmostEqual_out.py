@@ -3,6 +3,9 @@
 class TestAlmostAssertEqual(TestCase):
     def test_simple(self):
         assert round(abs(100-klm), 7) == 0
+        assert round(abs(456-(aaa and bbb)), 7) == 0
+        assert round(abs(789-(ccc or ddd)), 7) == 0
+        assert round(abs(123-(True if You else False)), 7) == 0
 
     def test_simple_msg(self):
         assert round(abs(klm-100), 7) == 0, "This is wrong!"

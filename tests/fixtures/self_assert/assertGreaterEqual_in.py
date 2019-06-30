@@ -6,6 +6,9 @@ class TestAssertGreaterEqual(TestCase):
 
     def test_me(self):
         self.assertGreaterEqual(123, xxx+y)
+        self.assertGreaterEqual(456, aaa and bbb)
+        self.assertGreaterEqual(789, ccc or ddd)
+        self.assertGreaterEqual(123, True if You else False)
 
     def test_everybody(self):
         self.assertGreaterEqual(   'abc'   ,    'def'   )

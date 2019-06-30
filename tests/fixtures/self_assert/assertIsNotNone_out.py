@@ -6,6 +6,9 @@ class TestAssertIsNotNone(TestCase):
 
     def test_me(self):
         assert xxx+y is not None
+        assert (aaa and bbb) is not None
+        assert (ccc or ddd) is not None
+        assert (True if You else False) is not None
 
     def test_everybody(self):
         assert 'def' is not None
