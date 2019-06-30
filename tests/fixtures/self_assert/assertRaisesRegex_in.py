@@ -36,3 +36,9 @@ class TestRaises(TestCase):
     def test_lambda(self):
         self.assertRaises(RunTimeError, lambda: error(1, 2))
         self.assertRaises(RunTimeError, lambda: error(1, 2) or error())
+
+    def test_atom(self):
+        self.assertRaisesRegex(RunTimeError, ("foo" "bar"), someFunc, 1,2,3)
+
+    def test_expr(self):
+        self.assertRaisesRegex(RunTimeError, "foo" + "bar", someFunc, 1,2,3)
