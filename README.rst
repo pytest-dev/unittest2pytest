@@ -83,7 +83,7 @@ use of the output value from the context managers (e.g. the ``x`` in
 manual adjustment after the fact.
 
 .. _`lib2to3 documentation`: http://docs.python.org/library/2to3.html
-.. _pytest: https://pytest.org/latest/
+.. _pytest: https://pytest.org/
 
 
 ..
