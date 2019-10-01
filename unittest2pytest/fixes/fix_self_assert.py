@@ -278,8 +278,7 @@ _method_map = {
     'assertSequenceEqual':  SequenceEqual,
 
     'assertDictContainsSubset': partial(DualOp, 'dict(\2, **\1) == \2'),
-    # :todo:
-    #'assertItemsEqual': '', # unordered sequence specific comparison.
+    'assertItemsEqual':         partial(DualOp, 'sorted(\1) == sorted(\2)'),
 
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),
     'assertNotAlmostEqual': partial(AlmostOp, "!=", ">"),
