@@ -202,6 +202,10 @@ def RaisesRegexOp(context, designator, exceptionClass, expected_regex,
     else:
         return Node(syms.suite, [with_stmt])
 
+def FailOp(indent, kws, arglist, node):
+    new = node.clone()
+    new.set_child(0, Name('pytest'))
+    return new
 
 def add_import(import_name, node):
     suite = get_parent_of_type(node, syms.suite)
@@ -292,6 +296,8 @@ _method_map = {
     'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises', 'excinfo'),
     'assertWarnsRegex':     partial(RaisesRegexOp, 'pytest.warns', 'record'),
 
+    'fail':                 FailOp,
+
     #'assertLogs': -- not to be handled here, is an context handler only
 }
 
@@ -378,7 +384,7 @@ class FixSelfAssert(BaseFix):
     PATTERN = """
     power< 'self'
       trailer< '.' method=( %s ) >
-      trailer< '(' arglist=any ')' >
+      trailer< '(' [arglist=any] ')' >
     >
     """ % ' | '.join(map(repr,
                          (set(_method_map.keys()) | set(_method_aliases.keys()))))
@@ -424,8 +430,10 @@ class FixSelfAssert(BaseFix):
         posargs = []
         kwargs = {}
 
-        # This is either a "arglist" or a single argument
-        if results['arglist'].type == syms.arglist:
+        # This is either empty, an "arglist", or a single argument
+        if 'arglist' not in results:
+            pass
+        elif results['arglist'].type == syms.arglist:
             for arg in results['arglist'].children:
                 process_arg(arg)
         else:
@@ -439,17 +447,17 @@ class FixSelfAssert(BaseFix):
 
         required_args, argsdict = utils.resolve_func_args(test_func, posargs, kwargs)
 
-        if method.startswith(('assertRaises', 'assertWarns')):
+        if method.startswith(('assertRaises', 'assertWarns')) or method == 'fail':
             n_stmt = _method_map[method](*required_args,
                                          indent=find_indentation(node),
                                          kws=argsdict,
-                                         arglist=results['arglist'],
+                                         arglist=results.get('arglist'),
                                          node=node)
         else:
             n_stmt = Node(syms.assert_stmt,
                           [Name('assert'),
                            _method_map[method](*required_args, kws=argsdict)])
-        if argsdict.get('msg', None) is not None:
+        if argsdict.get('msg', None) is not None and method != 'fail':
             n_stmt.children.extend((Name(','), argsdict['msg']))
 
         def fix_line_wrapping(x):
@@ -465,7 +473,7 @@ class FixSelfAssert(BaseFix):
         n_stmt.prefix = node.prefix
 
         # add necessary imports
-        if 'Raises' in method or 'Warns' in method:
+        if 'Raises' in method or 'Warns' in method or method == 'fail':
             add_import('pytest', node)
         if ('Regex' in method and not 'Raises' in method and
                 not 'Warns' in method):
