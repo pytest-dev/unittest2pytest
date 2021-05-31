@@ -6,6 +6,10 @@ Changelog
 
 - Python >=3.9 is now required.
 
+- Allow non-string keys when translating ``assertDictContainsSubset`` (`#54`_).
+
+.. _#54: https://github.com/pytest-dev/unittest2pytest/issues/54
+
 
 0.4 (2019-06-30)
 ----------------
