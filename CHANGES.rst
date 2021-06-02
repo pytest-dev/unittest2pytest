@@ -4,7 +4,10 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+* Drop support for Python 2 and 3.5
+
+* Fix ``assertDictContainsSubset``. On Python 3, the replacement would raise
+  a TypeError if the dictionary contained non-string keys.
 
 
 0.4 (2019-06-30)
