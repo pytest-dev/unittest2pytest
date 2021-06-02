@@ -5,14 +5,14 @@ sudo: false
 cache: pip
 
 python:
-  - 2.7
-  - 3.5
   - 3.6
   - 3.7
+  - 3.8
+  - 3.9
   - "nightly"
 
 allow_failures:
-  # Just tests how PyInstaller performs with upcoming Python 3.8
+  # Just tests how PyInstaller performs with upcoming Python 3.10
   - python: "nightly"
 
 # Install dependencies.
@@ -28,4 +28,4 @@ install:
   - pip install -r tests/requirements.txt | cat
 
 script:
-  - py.test -vv
+  - pytest -vv

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.

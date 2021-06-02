@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 This file is part of test-suite for unittest2pytest.
 """
@@ -21,8 +20,6 @@ This file is part of test-suite for unittest2pytest.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-
-from __future__ import unicode_literals
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
 __copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
