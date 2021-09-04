@@ -27,7 +27,6 @@ __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 import inspect
 from inspect import Parameter
-from collections import OrderedDict
 
 
 class SelfMarker: pass
