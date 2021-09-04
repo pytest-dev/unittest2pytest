@@ -8,7 +8,7 @@ https://travis-ci.org/pytest-dev/unittest2pytest/.
 Prior to pushing a pull-request to github, please test locally::
 
   pip install tox pytest
-  tox  # or tox -e py27,py33,py34
+  tox  # or tox -e py36,py37,py38,py39
 
 
 Version Scheme
@@ -54,7 +54,7 @@ Full Release Process
 
 4. Be sure that the current code passes tests locally::
 
-     tox -e py27,py33,py34
+     tox -e py36,py37,py38,py39
 
 5. Be sure `CI tests
    <https://travis-ci.org/pytest-dev/unittest2pytest/>`_ pass.

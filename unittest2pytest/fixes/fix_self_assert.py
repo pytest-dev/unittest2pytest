@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.
@@ -277,7 +276,7 @@ _method_map = {
     'assertTupleEqual':     partial(CompOp, '=='),
     'assertSequenceEqual':  SequenceEqual,
 
-    'assertDictContainsSubset': partial(DualOp, 'dict(\2, **\1) == \2'),
+    'assertDictContainsSubset': partial(DualOp, '{**\2, **\1} == \2'),
     'assertItemsEqual':         partial(DualOp, 'sorted(\1) == sorted(\2)'),
 
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),
