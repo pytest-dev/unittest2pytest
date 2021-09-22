@@ -3,7 +3,7 @@ Testing
 ===========
 
 Continuous integration tests are available at
-https://travis-ci.org/pytest-dev/unittest2pytest/.
+https://github.com/pytest-dev/unittest2pytest/actions.
 
 Prior to pushing a pull-request to github, please test locally::
 
@@ -57,7 +57,7 @@ Full Release Process
      tox -e py27,py33,py34
 
 5. Be sure `CI tests
-   <https://travis-ci.org/pytest-dev/unittest2pytest/>`_ pass.
+   <https://github.com/pytest-dev/unittest2pytest/actions>`_ pass.
 
 
 Now we start with the main release process.
