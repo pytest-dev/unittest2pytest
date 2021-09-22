@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #
@@ -35,7 +34,7 @@ version = get_version('unittest2pytest/__init__.py')
 
 
 def read(filename):
-    return open(filename, 'r', encoding='utf-8').read()
+    return open(filename, encoding='utf-8').read()
 
 
 long_description = '\n\n'.join([read('README.rst'),
