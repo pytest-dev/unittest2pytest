@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.
@@ -136,9 +135,8 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     exceptionClass.prefix = ""
     args = [exceptionClass]
     # Add match keyword arg to with statement if an expected regex was provided.
-    # In py27 the keyword is `expected_regexp`, in py3 is `expected_regex`
-    if 'expected_regex' in kws or 'expected_regexp' in kws:
-        expected_regex = kws.get('expected_regex', kws.get('expected_regexp')).clone()
+    if 'expected_regex' in kws:
+        expected_regex = kws.get('expected_regex').clone()
         expected_regex.prefix = ''
         args.append(String(', '))
         args.append(

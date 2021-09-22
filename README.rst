@@ -13,9 +13,9 @@ Helps converting unittest test-cases to pytest
 :Homepage:  https://github.com/pytest-dev/unittest2pytest
 
 
-.. image:: https://secure.travis-ci.org/pytest-dev/unittest2pytest.png?branch=develop
-   :target: https://travis-ci.org/pytest-dev/unittest2pytest/
-
+.. image:: https://github.com/pytest-dev/unittest2pytest/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/pytest-dev/unittest2pytest/actions
+    :alt: See Build Status on GitHub Actions
 
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
 test-cases into pytest_ test-cases.
