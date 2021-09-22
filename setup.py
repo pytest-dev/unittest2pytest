@@ -20,9 +20,7 @@
 #
 
 from setuptools import setup
-import codecs
 import re
-import sys
 
 
 def get_version(filename):
@@ -37,14 +35,11 @@ version = get_version('unittest2pytest/__init__.py')
 
 
 def read(filename):
-    try:
-        return unicode(codecs.open(filename, encoding='utf-8').read())
-    except NameError:
-        return open(filename, 'r', encoding='utf-8').read()
+    return open(filename, 'r', encoding='utf-8').read()
+
+
 long_description = '\n\n'.join([read('README.rst'),
                                 read('CHANGES.rst')])
-if sys.version_info < (3,):
-    long_description = long_description.encode('utf-8')
 
 
 setup(
@@ -69,10 +64,8 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -81,6 +74,6 @@ setup(
         "Topic :: Software Development",
         "Topic :: Utilities",
     ],
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    python_requires=">=3.6",
     zip_safe=False
 )
