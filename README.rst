@@ -20,7 +20,7 @@ Helps converting unittest test-cases to pytest
 `unittest2pytest` is a tool that helps rewriting Python `unittest`
 test-cases into pytest_ test-cases.
 
-In contrast to other similar tools, this `unittest2pytest`
+In contrast to other similar tools, `unittest2pytest`
 
 * handles keyword arguments,
 * handles single-line test-cases and several tests on one line,
@@ -28,6 +28,8 @@ In contrast to other similar tools, this `unittest2pytest`
 
 This is done by using ``lib2to3`` and Python's mighty ``inspect``
 module.
+
+Another good rewriting tool is pytestify_.
 
 
 
@@ -84,6 +86,7 @@ manual adjustment after the fact.
 
 .. _`lib2to3 documentation`: http://docs.python.org/library/2to3.html
 .. _pytest: https://pytest.org/
+.. _pytestify: https://github.com/dannysepler/pytestify
 
 
 ..
