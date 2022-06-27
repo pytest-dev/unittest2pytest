@@ -11,20 +11,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10-dev"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.10-dev"]
         os: [ubuntu-latest, macos-latest, windows-latest]
         exclude:
           # TODO Fix these versions on Windows
           - {os: windows-latest, python-version: "3.7"}
           - {os: windows-latest, python-version: "3.8"}
           - {os: windows-latest, python-version: "3.9"}
-          - {os: windows-latest, python-version: "3.10-dev"}
+          - {os: windows-latest, python-version: "3.10"}
+          - {os: windows-latest, python-version: "3.11-dev"}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -34,7 +35,7 @@ jobs:
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key:
@@ -44,9 +45,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install -U pip
+          python -m pip install --upgrade pip
           python -m pip install -e .
-          pip install -r tests/requirements.txt
+          python -m pip install -r tests/requirements.txt
 
       - name: Test
         run: |
