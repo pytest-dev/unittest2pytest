@@ -168,7 +168,7 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
         suite = func.children[-1].clone()
     else:
         # TODO: Newlines within arguments are not handled yet.
-        # If argment prefix contains a newline, all whitespace around this
+        # If argument prefix contains a newline, all whitespace around this
         # ought to be replaced by indent plus 4+1+len(func) spaces.
         suite = Call(func, arglist)
 
