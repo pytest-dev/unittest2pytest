@@ -124,7 +124,7 @@ def AlmostOp(places_op, delta_op, first, second, kws):
         # delta
         return CompOp(delta_op, abs_op, kws['delta'], {})
     else:
-        # `7` is the default in unittest.TestCase.asserAlmostEqual
+        # `7` is the default in unittest.TestCase.assertAlmostEqual
         places = kws['places'] or Number(7)
         places.prefix = " "
         round_op = Call(Name('round'), (abs_op, Comma(), places))
