@@ -114,21 +114,14 @@ def SequenceEqual(left, right, kws):
 
 
 def AlmostOp(places_op, delta_op, first, second, kws):
-    first.prefix =  ""
+    first.prefix = ""
     second.prefix = ""
     first = parenthesize_expression(first)
     second = parenthesize_expression(second)
-    abs_op = Call(Name('abs'),
-                  [Node(syms.factor, [first, Name('-'), second])])
-    if kws.get('delta', None) is not None:
-        # delta
-        return CompOp(delta_op, abs_op, kws['delta'], {})
+    if kws.get('places') is not None:
+        return CompOp(places_op, first, Call(Name("approx"), [second, kws.get('places')]), {})
     else:
-        # `7` is the default in unittest.TestCase.assertAlmostEqual
-        places = kws['places'] or Number(7)
-        places.prefix = " "
-        round_op = Call(Name('round'), (abs_op, Comma(), places))
-        return CompOp(places_op, round_op, Number(0), {})
+        return CompOp(places_op, first, Call(Name("approx"), [second]), {})
 
 
 def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
