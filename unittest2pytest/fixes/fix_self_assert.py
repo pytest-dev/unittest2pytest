@@ -290,7 +290,10 @@ _method_map = {
     'assertRaisesRegex':    partial(RaisesRegexOp, 'pytest.raises', 'excinfo'),
     'assertWarnsRegex':     partial(RaisesRegexOp, 'pytest.warns', 'record'),
 
-    #'assertLogs': -- not to be handled here, is an context handler only
+    'assertCountEqual': partial(DualOp,
+                                'collections.Counter(\1) == collections.Counter(\2)'),
+
+    #'assertLogs': -- not to be handled here, is a context handler only
 }
 
 for newname, oldname in (
@@ -468,5 +471,7 @@ class FixSelfAssert(BaseFix):
         if ('Regex' in method and not 'Raises' in method and
                 not 'Warns' in method):
             add_import('re', node)
+        if 'assertCountEqual' == method:
+            add_import('collections', node)
 
         return n_stmt
