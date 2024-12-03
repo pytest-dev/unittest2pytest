@@ -4,7 +4,7 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Python >=3.9 is now required.
 
 
 0.4 (2019-06-30)
