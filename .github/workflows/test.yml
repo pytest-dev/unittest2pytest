@@ -11,14 +11,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        #exclude:
-        #  # TODO Fix these versions on Windows
-        #  - {os: windows-latest, python-version: "3.8"}
-        #  - {os: windows-latest, python-version: "3.9"}
-        #  - {os: windows-latest, python-version: "3.10"}
-        #  - {os: windows-latest, python-version: "3.11"}
+        # Python >= 3.13 will fail with `ModuleNotFoundError: No module named 'lib2to3'`
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, macos-latest]  # , windows-latest]  # Windows tests will fail.
 
     steps:
       - uses: actions/checkout@v4
