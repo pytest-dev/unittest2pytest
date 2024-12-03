@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         # Python >= 3.13 will fail with `ModuleNotFoundError: No module named 'lib2to3'`
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         os: [ubuntu-latest, macos-latest]  # , windows-latest]  # Windows tests will fail.
 
     steps:
