@@ -4,11 +4,16 @@ Changelog
 0.5 (unreleased)
 ----------------
 
+
+- Convert ``self.fail()`` to ``pytest.fail()`` (`#39`__).
+
 - Python >=3.9 is now required.
 
 - Allow non-string keys when translating ``assertDictContainsSubset`` (`#54`_).
 
+.. _#39: https://github.com/pytest-dev/unittest2pytest/issues/39
 .. _#54: https://github.com/pytest-dev/unittest2pytest/issues/54
+
 
 
 0.4 (2019-06-30)
