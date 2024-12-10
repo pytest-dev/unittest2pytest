@@ -4,7 +4,7 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Convert ``self.fail()`` to ``pytest.fail()``.
 
 
 0.4 (2019-06-30)
