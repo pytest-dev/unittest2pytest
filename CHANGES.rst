@@ -5,7 +5,7 @@ Changelog
 ----------------
 
 
-- Convert ``self.fail()`` to ``pytest.fail()`` (`#39`__).
+- Convert ``self.fail()`` to ``pytest.fail()`` (`#39`_).
 
 - Python >=3.9 is now required.
 
