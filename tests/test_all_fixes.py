@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 This file is part of test-suite for unittest2pytest.
 """
@@ -22,7 +21,6 @@ This file is part of test-suite for unittest2pytest.
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-from __future__ import unicode_literals
 
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
 __copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
@@ -108,7 +106,7 @@ def test_check_fixture(in_file, fixer, tmpdir):
     try:
         compile(''.join(expected_contents), expected_file, 'exec')
     except Exception as e:
-        pytest.fail("FATAL: %s does not compile: %s" % (expected_file, e),
+        pytest.fail(f"FATAL: {expected_file} does not compile: {e}",
                     False)
 
     if result_file_contents != expected_contents:

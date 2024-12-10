@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
 by their pytest equivalent.
@@ -125,7 +124,7 @@ def AlmostOp(places_op, delta_op, first, second, kws):
         # delta
         return CompOp(delta_op, abs_op, kws['delta'], {})
     else:
-        # `7` is the default in unittest.TestCase.asserAlmostEqual
+        # `7` is the default in unittest.TestCase.assertAlmostEqual
         places = kws['places'] or Number(7)
         places.prefix = " "
         round_op = Call(Name('round'), (abs_op, Comma(), places))
@@ -136,9 +135,8 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
     exceptionClass.prefix = ""
     args = [exceptionClass]
     # Add match keyword arg to with statement if an expected regex was provided.
-    # In py27 the keyword is `expected_regexp`, in py3 is `expected_regex`
-    if 'expected_regex' in kws or 'expected_regexp' in kws:
-        expected_regex = kws.get('expected_regex', kws.get('expected_regexp')).clone()
+    if 'expected_regex' in kws:
+        expected_regex = kws.get('expected_regex').clone()
         expected_regex.prefix = ''
         args.append(String(', '))
         args.append(
@@ -170,7 +168,7 @@ def RaisesOp(context, exceptionClass, indent, kws, arglist, node):
         suite = func.children[-1].clone()
     else:
         # TODO: Newlines within arguments are not handled yet.
-        # If argment prefix contains a newline, all whitespace around this
+        # If argument prefix contains a newline, all whitespace around this
         # ought to be replaced by indent plus 4+1+len(func) spaces.
         suite = Call(func, arglist)
 
@@ -281,7 +279,7 @@ _method_map = {
     'assertTupleEqual':     partial(CompOp, '=='),
     'assertSequenceEqual':  SequenceEqual,
 
-    'assertDictContainsSubset': partial(DualOp, 'dict(\2, **\1) == \2'),
+    'assertDictContainsSubset': partial(DualOp, '{**\2, **\1} == \2'),
     'assertItemsEqual':         partial(DualOp, 'sorted(\1) == sorted(\2)'),
 
     'assertAlmostEqual':    partial(AlmostOp, "==", "<"),

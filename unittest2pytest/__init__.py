@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2015-2019 by Hartmut Goebel <h.goebel@crazy-compilers.com>
 #

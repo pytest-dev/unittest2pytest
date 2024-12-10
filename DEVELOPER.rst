@@ -3,12 +3,12 @@ Testing
 ===========
 
 Continuous integration tests are available at
-https://travis-ci.org/pytest-dev/unittest2pytest/.
+https://github.com/pytest-dev/unittest2pytest/actions.
 
-Prior to pushing a pull-request to github, please test locally::
+Prior to pushing a pull request to GitHub, please test locally::
 
   pip install tox pytest
-  tox  # or tox -e py27,py33,py34
+  tox  # or tox -e py37,py38,py39
 
 
 Version Scheme
@@ -54,10 +54,10 @@ Full Release Process
 
 4. Be sure that the current code passes tests locally::
 
-     tox -e py27,py33,py34
+     tox -e py37,py38,py39
 
 5. Be sure `CI tests
-   <https://travis-ci.org/pytest-dev/unittest2pytest/>`_ pass.
+   <https://github.com/pytest-dev/unittest2pytest/actions>`_ pass.
 
 
 Now we start with the main release process.
@@ -154,7 +154,7 @@ Now we start with the main release process.
 
        git push --follow-tags origin master
 
-15. Create release on github:
+15. Create release on GitHub:
 
     a. Go to the `unittest2pytest release page
        <https://github.com/pytest-dev/unittest2pytest/releases>`_
