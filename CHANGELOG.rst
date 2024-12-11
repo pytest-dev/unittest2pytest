@@ -1,8 +1,10 @@
 Changelog
 ============
 
-0.5 (unreleased)
-----------------
+0.5
+---
+
+*2024-12-10*
 
 
 - Convert ``self.fail()`` to ``pytest.fail()`` (`#39`_).
