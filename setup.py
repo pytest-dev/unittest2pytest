@@ -17,16 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+from pathlib import Path
 
 from setuptools import setup
 import re
 
 
+this_dir = Path(__file__).parent
+
 def get_version(filename):
     """
     Return package version as listed in `__version__` in `filename`.
     """
-    init_py = open(filename).read()
+    init_py = this_dir.joinpath(filename).read_text(encoding="utf-8")
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
 
 
@@ -34,11 +37,11 @@ version = get_version('unittest2pytest/__init__.py')
 
 
 def read(filename):
-    return open(filename, encoding='utf-8').read()
+    return this_dir.joinpath(filename).read_text(encoding='utf-8')
 
 
 long_description = '\n\n'.join([read('README.rst'),
-                                read('CHANGES.rst')])
+                                read('CHANGELOG.rst')])
 
 
 setup(
@@ -47,6 +50,7 @@ setup(
     version=version,
     description="Convert unittest test-cases to pytest",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     author="Hartmut Goebel",
     author_email="h.goebel@crazy-compilers.com",
     url="https://github.com/pytest-dev/unittest2pytest",

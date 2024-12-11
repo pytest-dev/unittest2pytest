@@ -8,7 +8,7 @@ Helps converting unittest test-cases to pytest
 
 :Author:    Hartmut Goebel <h.goebel@crazy-compilers.com>
 :Version:   0.5.dev0
-:Copyright: 2015-2019 by Hartmut Goebel
+:Copyright: 2015 by Hartmut Goebel
 :Licence:   GNU Public Licence v3 or later (GPLv3+)
 :Homepage:  https://github.com/pytest-dev/unittest2pytest
 
