@@ -22,7 +22,7 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build and Check Package
         uses: hynek/build-and-inspect-python-package@v2.14
 
@@ -37,7 +37,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]  # , windows-latest]  # Windows tests will fail.
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download Package
         uses: actions/download-artifact@v6
