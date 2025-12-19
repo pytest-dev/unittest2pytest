@@ -26,8 +26,8 @@ In contrast to other similar tools, this `unittest2pytest`
 * handles single-line test-cases and several tests on one line,
 * uses context-handlers where appropriate.
 
-This is done by using ``lib2to3`` and Python's mighty ``inspect``
-module.
+This is done by using ``lib2to3`` (removed in Python >= 3.13)
+and Python's mighty ``inspect`` module.
 
 
 
@@ -36,8 +36,13 @@ Installation
 
 To install unittest2pytest, simply run::
 
-    pip install unittest2pytest
+    uv tool install --python=3.12 unittest2pytest
+    # Or to run once
+    uv tool run --python=3.12 unittest2pytest .
+    # Or shortcut to run once
+    uvx --python=3.12 unittest2pytest .
 
+The ``--python=3.12`` ensures the presence of `lib2to3``.
 
 Usage
 ===================
@@ -78,7 +83,7 @@ A list of the available fixers can be found with the following::
 Note: if your tests use the context managers ``with self.assertRaises`` or
 ``with self.assertWarns``, they will be transformed to ``pytest.raises`` or
 ``pytest.warns`` appropriately, but because the semantics are different, any
-use of the output value from the context managers (e.g. the ``x`` in
+use of the output value from the context managers (e.g., the ``x`` in
 ``with pytest.raises(ValueError) as x:``) will be wrong and will require
 manual adjustment after the fact.
 
