@@ -26,7 +26,7 @@ In contrast to other similar tools, this `unittest2pytest`
 * handles single-line test-cases and several tests on one line,
 * uses context-handlers where appropriate.
 
-This is done by using ``lib2to3`` (removed in Python >= 3.13)
+This is done by using fissix_ (a maintained fork of ``lib2to3``)
 and Python's mighty ``inspect`` module.
 
 
@@ -36,13 +36,8 @@ Installation
 
 To install unittest2pytest, simply run::
 
-    uv tool install --python=3.12 unittest2pytest
-    # Or to run once
-    uv tool run --python=3.12 unittest2pytest .
-    # Or shortcut to run once
-    uvx --python=3.12 unittest2pytest .
+    pip install unittest2pytest
 
-The ``--python=3.12`` ensures the presence of `lib2to3``.
 
 Usage
 ===================
@@ -65,7 +60,7 @@ changed. You can add the `-n` option to not create the backups. Please
 do not do this if you are not using a version control system.
 
 For more options about running particular fixers, run
-``unittest2pytest --help`` or read the `lib2to3 documentation`_. This
+``unittest2pytest --help`` or read the `fissix documentation`_. This
 tool is built on top of that one.
 
 
@@ -87,7 +82,8 @@ use of the output value from the context managers (e.g., the ``x`` in
 ``with pytest.raises(ValueError) as x:``) will be wrong and will require
 manual adjustment after the fact.
 
-.. _`lib2to3 documentation`: http://docs.python.org/library/2to3.html
+.. _fissix: https://github.com/amyreese/fissix
+.. _`fissix documentation`: https://github.com/amyreese/fissix
 .. _pytest: https://pytest.org/
 
 

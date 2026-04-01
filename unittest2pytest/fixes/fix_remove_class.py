@@ -1,5 +1,5 @@
 """
-fix_remove_class - lib2to3 fix for removing "class Testxxx(TestCase):"
+fix_remove_class - fissix fix for removing "class Testxxx(TestCase):"
 headers and dedenting the contained code.
 """
 #
@@ -26,8 +26,8 @@ __copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
-from lib2to3.fixer_base import BaseFix
-from lib2to3.fixer_util import token, find_indentation
+from fissix.fixer_base import BaseFix
+from fissix.fixer_util import token, find_indentation
 
 """
 Node(classdef, 
