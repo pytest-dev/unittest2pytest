@@ -1,5 +1,5 @@
 """
-fix_self_assert - lib2to3 fix for replacing assertXXX() method calls
+fix_self_assert - fissix fix for replacing assertXXX() method calls
 by their pytest equivalent.
 """
 #
@@ -26,8 +26,8 @@ __copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
-from lib2to3.fixer_base import BaseFix
-from lib2to3.fixer_util import (
+from fissix.fixer_base import BaseFix
+from fissix.fixer_util import (
     Comma, Name, Call, Node, Leaf,
     Newline, KeywordArg, find_indentation,
     ArgList, String, Number, syms, token,
@@ -229,7 +229,7 @@ def get_parent_of_type(node, node_type):
 
 def insert_import(import_stmt, test_case, file_input):
     """This inserts an import in a very similar way as
-    lib2to3.fixer_util.touch_import, but try to maintain encoding and shebang
+    fissix.fixer_util.touch_import, but try to maintain encoding and shebang
     prefixes on top of the file when there is no import"""
     import_nodes = get_import_nodes(file_input)
     if import_nodes:

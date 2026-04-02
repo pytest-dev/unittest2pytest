@@ -32,8 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Python >= 3.13 will fail with `ModuleNotFoundError: No module named 'lib2to3'`
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
         os: [ubuntu-latest, macos-latest]  # , windows-latest]  # Windows tests will fail.
 
     steps:
@@ -49,6 +48,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
 
       - name: Install tox
         run: |
