@@ -1,5 +1,6 @@
 include CHANGELOG.rst
 include COPYING-GPLv3.txt
+include NEWLINE.rst
 include README.rst
 
 recursive-include tests *
