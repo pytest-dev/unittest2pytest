@@ -1,7 +1,6 @@
 exclude .gitignore
-exclude make_changelog.py
-exclude check_changelog.py
 exclude DEVELOPER.rst
 exclude RELEASING.rst
 exclude tox.ini
 prune .github
+prune scripts

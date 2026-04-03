@@ -28,13 +28,13 @@ jobs:
 
       - name: Check changelog (tagged release)
         if: github.ref_type == 'tag'
-        run: python check_changelog.py --tag "${{ github.ref_name }}"
+        run: python scripts/check_changelog.py --tag "${{ github.ref_name }}"
 
       - name: Check changelog (PR has new entries)
         if: github.event_name == 'pull_request'
         run: |
           git fetch origin main --depth=1
-          python check_changelog.py
+          python scripts/check_changelog.py
 
   package:
     runs-on: ubuntu-latest
@@ -79,45 +79,3 @@ jobs:
         shell: bash
         run: |
           tox run -e py --installpkg `find dist/*.tar.gz`
-
-  pypi-publish:
-    if: github.ref_type == 'tag'
-    needs: [changelog, package, test]
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Download Package
-        uses: actions/download-artifact@v8
-        with:
-          name: Packages
-          path: dist
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.13.0
-        with:
-          attestations: true
-
-  github-release:
-    if: github.ref_type == 'tag'
-    needs: [pypi-publish]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download Package
-        uses: actions/download-artifact@v8
-        with:
-          name: Packages
-          path: dist
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ github.ref_name }}" --generate-notes dist/*

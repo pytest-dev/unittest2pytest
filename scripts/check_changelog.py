@@ -15,7 +15,18 @@ import subprocess
 import sys
 from pathlib import Path
 
-CHANGELOG = Path(__file__).resolve().parent / "CHANGELOG.rst"
+
+def _find_changelog() -> Path:
+    d = Path(__file__).resolve().parent
+    while d != d.parent:
+        p = d / "CHANGELOG.rst"
+        if p.exists():
+            return p
+        d = d.parent
+    raise FileNotFoundError("CHANGELOG.rst not found")
+
+
+CHANGELOG = _find_changelog()
 REPO_ROOT = CHANGELOG.parent
 
 
@@ -57,7 +68,10 @@ def check_unreleased() -> int:
         return 1
 
     if not current:
-        print("ERROR: UNRELEASED section is empty — add a changelog entry", file=sys.stderr)
+        print(
+            "ERROR: UNRELEASED section is empty — add a changelog entry",
+            file=sys.stderr,
+        )
         return 1
 
     main_text = _main_changelog()
