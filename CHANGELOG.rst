@@ -6,6 +6,30 @@ UNRELEASED
 
 *UNRELEASED*
 
+- Switch from lib2to3 to `fissix <https://github.com/amyreese/fissix>`_,
+  a maintained fork of lib2to3 (`#95`_).
+
+- Add Python 3.13, 3.14, and 3.15 support.
+
+- Migrate packaging from ``setup.py`` to ``pyproject.toml`` with
+  PEP 639 SPDX license metadata (``GPL-3.0-or-later``) (`#96`_).
+
+- Use ``setuptools-scm`` for version management. Versions are now
+  derived from git tags (`#97`_).
+
+- Add ``check_changelog.py`` CI check to enforce changelog entries
+  (`#97`_).
+
+- Gate PyPI publishing on tests passing by merging the release
+  workflow into CI (`#97`_).
+
+- Update installation instructions with ``uv tool install`` (`#92`_).
+
+.. _#92: https://github.com/pytest-dev/unittest2pytest/pull/92
+.. _#95: https://github.com/pytest-dev/unittest2pytest/pull/95
+.. _#96: https://github.com/pytest-dev/unittest2pytest/pull/96
+.. _#97: https://github.com/pytest-dev/unittest2pytest/pull/97
+
 
 0.5
 ---
