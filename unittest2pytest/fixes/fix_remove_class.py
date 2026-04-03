@@ -27,7 +27,7 @@ __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 from fissix.fixer_base import BaseFix
-from fissix.fixer_util import token, find_indentation
+from fissix.fixer_util import find_indentation, token
 
 """
 Node(classdef, 
@@ -47,8 +47,8 @@ Node(classdef,
           Leaf(6, '')])])
 """
 
-class FixRemoveClass(BaseFix):
 
+class FixRemoveClass(BaseFix):
     PATTERN = """
       classdef< 'class' name=any '(' 'TestCase' ')' ':'
          suite=suite
@@ -67,10 +67,9 @@ class FixRemoveClass(BaseFix):
                 # todo: handle tabs
                 if len(kid.prefix) > len(self.current_indent):
                     kid.prefix = self.current_indent
-            
 
     def transform(self, node, results):
-        suite = results['suite'].clone()
+        suite = results["suite"].clone()
         # todo: handle tabs
         dedent = len(find_indentation(suite)) - len(find_indentation(node))
         self.dedent(suite, dedent)

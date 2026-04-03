@@ -23,10 +23,13 @@ __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
 import fissix.main
+
 from . import fixes
+
 
 def main():
     raise SystemExit(fissix.main.main(fixes.__name__))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

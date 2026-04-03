@@ -21,45 +21,43 @@ This file is part of test-suite for unittest2pytest.
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 __author__ = "Hartmut Goebel <h.goebel@crazy-compilers.com>"
 __copyright__ = "Copyright 2015-2019 by Hartmut Goebel"
 __licence__ = "GNU General Public License version 3 or later (GPLv3+)"
 
 
-import pytest
-
-
-import os
-from os.path import join, abspath
-import re
 import glob
-import shutil
-from difflib import unified_diff
-import unittest
 import logging
+import os
+import re
+import unittest
+from difflib import unified_diff
+from os.path import abspath, join
 
+import pytest
 from fissix.main import main
 
 # make logging less verbose
-logging.getLogger('fissix.main').setLevel(logging.WARN)
-logging.getLogger('RefactoringTool').setLevel(logging.WARN)
+logging.getLogger("fissix.main").setLevel(logging.WARN)
+logging.getLogger("RefactoringTool").setLevel(logging.WARN)
 
-FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
+FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
+
 
 def requiredTestMethod(name):
     # skip if TestCase does not have this method
     is_missing = getattr(unittest.TestCase, name, None) is None
-    return pytest.mark.skipif(is_missing,
-                              reason="unittest does not have TestCase.%s " % name)
+    return pytest.mark.skipif(
+        is_missing, reason="unittest does not have TestCase.%s " % name
+    )
 
 
 def _collect_in_files_from_directory(directory):
-    fixture_files = glob.glob(abspath(join(directory, '*_in.py')))
+    fixture_files = glob.glob(abspath(join(directory, "*_in.py")))
     for fixture_file in fixture_files:
         with open(fixture_file) as fh:
             text = fh.read(200)
-        l = re.findall(r'^# required-method: (\S+)', text)
+        l = re.findall(r"^# required-method: (\S+)", text)
         method = l[0] if l else None
         yield fixture_file, method
 
@@ -70,7 +68,7 @@ def collect_all_test_fixtures():
         # subdirectory, only run the fixer of the subdirectory name, else run
         # all fixers.
         for in_file, method in _collect_in_files_from_directory(root):
-            fixer_to_run = root[len(FIXTURE_PATH)+1:] or None
+            fixer_to_run = root[len(FIXTURE_PATH) + 1 :] or None
             marks = []
             if method:
                 marks.append(requiredTestMethod(method))
@@ -82,20 +80,39 @@ def _get_id(argvalue):
         return os.path.basename(argvalue).replace("_in.py", "")
 
 
-@pytest.mark.parametrize("fixer, in_file",
-                         collect_all_test_fixtures(), ids=_get_id)
+@pytest.mark.parametrize("fixer, in_file", collect_all_test_fixtures(), ids=_get_id)
 def test_check_fixture(in_file, fixer, tmpdir):
     if fixer:
-        main("unittest2pytest.fixes",
-             args=['--no-diffs', '--fix', fixer, '-w', in_file,
-                   '--nobackups', '--output-dir', str(tmpdir)])
+        main(
+            "unittest2pytest.fixes",
+            args=[
+                "--no-diffs",
+                "--fix",
+                fixer,
+                "-w",
+                in_file,
+                "--nobackups",
+                "--output-dir",
+                str(tmpdir),
+            ],
+        )
     else:
-        main("unittest2pytest.fixes",
-             args=['--no-diffs', '--fix', 'all', '-w', in_file,
-                   '--nobackups', '--output-dir', str(tmpdir)])
+        main(
+            "unittest2pytest.fixes",
+            args=[
+                "--no-diffs",
+                "--fix",
+                "all",
+                "-w",
+                in_file,
+                "--nobackups",
+                "--output-dir",
+                str(tmpdir),
+            ],
+        )
 
     result_file_name = tmpdir.join(os.path.basename(in_file))
-    assert result_file_name.exists(), '%s is missing' % result_file_name
+    assert result_file_name.exists(), "%s is missing" % result_file_name
     result_file_contents = result_file_name.readlines()
 
     expected_file = in_file.replace("_in.py", "_out.py")
@@ -104,13 +121,15 @@ def test_check_fixture(in_file, fixer, tmpdir):
 
     # ensure the expected code is actually correct and compiles
     try:
-        compile(''.join(expected_contents), expected_file, 'exec')
+        compile("".join(expected_contents), expected_file, "exec")
     except Exception as e:
-        pytest.fail(f"FATAL: {expected_file} does not compile: {e}",
-                    False)
+        pytest.fail(f"FATAL: {expected_file} does not compile: {e}", False)
 
     if result_file_contents != expected_contents:
         text = "Refactured code doesn't match expected outcome\n"
-        text += ''.join(unified_diff(expected_contents, result_file_contents,
-                                     'expected', 'refactured result'))
+        text += "".join(
+            unified_diff(
+                expected_contents, result_file_contents, "expected", "refactured result"
+            )
+        )
         pytest.fail(text, False)
