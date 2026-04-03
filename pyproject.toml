@@ -47,12 +47,6 @@ readme = {file = ["README.rst", "NEWLINE.rst", "CHANGELOG.rst"], content-type = 
 [tool.setuptools_scm]
 version_file = "unittest2pytest/_version.py"
 
-[tool.zest-releaser]
-push-changes = false
-tag-format = "v{version}"
-tag-message = "unittest2pytest {version}"
-tag-signing = true
-
 [tool.ruff]
 target-version = "py39"
 extend-exclude = ["tests/fixtures"]
