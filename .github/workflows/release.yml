@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump (ignored if version is set)"
+        required: false
+        type: choice
+        default: minor
+        options:
+          - major
+          - minor
+          - micro
+          - post
+      version:
+        description: "Exact version (e.g. 1.0rc1). Overrides bump."
+        required: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare changelog
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            version=$(python scripts/make_changelog.py "${{ github.event.inputs.version }}")
+          else
+            version=$(python scripts/make_changelog.py --${{ github.event.inputs.bump }})
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and tag
+        run: |
+          git commit -am "Prepare release ${{ steps.version.outputs.version }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Build
+        id: build
+        uses: hynek/build-and-inspect-python-package@v2.14
+        with:
+          upload-name-suffix: -release
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/extract_changelog.py "${{ steps.version.outputs.version }}" --format gfm > /tmp/release-notes.md
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --notes-file /tmp/release-notes.md \
+            ${{ steps.build.outputs.dist }}/*
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        with:
+          attestations: true
+          packages-dir: ${{ steps.build.outputs.dist }}
+
+      - name: Start next development cycle
+        run: |
+          python scripts/make_changelog.py UNRELEASED
+          git commit -am "Start next development cycle"
+          git push origin main

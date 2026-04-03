@@ -8,59 +8,39 @@ Versions are derived automatically from git tags.
 .. _setuptools-scm: https://github.com/pypa/setuptools-scm
 
 
-Version
--------
+Relative bump
+-------------
 
-``main`` should always be green and a potential release candidate.
-``unittest2pytest`` follows semantic versioning, so given that the
-current version is ``X.Y.Z``, to find the next version number one
-needs to look at the ``CHANGELOG.rst`` file:
+Run the **Release** workflow, selecting the version bump type:
 
-- If there any new feature, then we must make a new **minor** release:
-  next release will be ``X.Y+1.0``.
+.. code-block:: console
 
-- Otherwise it is just a **bug fix** release: ``X.Y.Z+1``.
+     gh workflow run release.yml -R pytest-dev/unittest2pytest --field bump=minor
+
+Options: ``major``, ``minor``, ``micro``, ``post``.  The version is
+computed automatically from the latest git tag.
 
 
-Steps
------
+Absolute version
+----------------
 
-To publish a new release ``X.Y.Z``, the steps are as follows:
+To release a specific version (e.g. a release candidate):
 
-#. Update ``CHANGELOG.rst``:
+.. code-block:: console
 
-   .. code-block:: console
+     gh workflow run release.yml -R pytest-dev/unittest2pytest --field version=1.0rc1
 
-        python make_changelog.py X.Y.Z
 
-   This replaces the ``UNRELEASED`` section with a dated ``X.Y.Z``
-   section.  Review the result and add any missing entries before
-   committing.
+What the workflow does
+----------------------
 
-#. Commit and push:
-
-   .. code-block:: console
-
-        git commit -am "Prepare release X.Y.Z"
-        git push origin main
-
-#. Tag and push:
-
-   .. code-block:: console
-
-        git tag -s vX.Y.Z -m "unittest2pytest X.Y.Z"
-        git push origin vX.Y.Z
-
-   Pushing the tag triggers the CI workflow, which builds, tests,
-   publishes to PyPI, and creates a GitHub release.
-
-#. Start the next development cycle:
-
-   .. code-block:: console
-
-        python make_changelog.py UNRELEASED
-        git commit -am "Start next development cycle"
-        git push origin main
+#. Runs ``scripts/make_changelog.py`` to replace the ``UNRELEASED`` section
+   with the version number and today's date.
+#. Commits, tags, and pushes.
+#. Builds the package.
+#. Creates a GitHub Release with the built artifacts.
+#. Publishes to PyPI (requires the ``release`` environment).
+#. Runs ``scripts/make_changelog.py UNRELEASED`` and pushes a follow-up commit.
 
 
 How versioning works
