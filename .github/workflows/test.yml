@@ -1,10 +1,12 @@
-name: Test
+name: CI
 
 on:
   push:
     branches:
       - main
       - "test-me-*"
+    tags:
+      - "v*"
 
   pull_request:
     branches:
@@ -19,10 +21,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check changelog (tagged release)
+        if: github.ref_type == 'tag'
+        run: python scripts/check_changelog.py --tag "${{ github.ref_name }}"
+
+      - name: Check changelog (PR has new entries)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main --depth=1
+          python scripts/check_changelog.py
+
   package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Build and Check Package
         uses: hynek/build-and-inspect-python-package@v2.14
 

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=77"]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -43,11 +43,7 @@ include-package-data = false
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "NEWLINE.rst", "CHANGELOG.rst"], content-type = "text/x-rst"}
-version = {attr = "unittest2pytest.__version__"}
 
-[tool.zest-releaser]
-python-file-with-version = "unittest2pytest/__init__.py"
-push-changes = false
-tag-format = "v{version}"
-tag-message = "unittest2pytest {version}"
-tag-signing = true
+[tool.setuptools_scm]
+version_file = "unittest2pytest/_version.py"
+
