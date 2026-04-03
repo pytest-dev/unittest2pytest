@@ -1,5 +1,4 @@
 exclude .gitignore
-exclude RELEASE_PROCESS.md
 exclude make_changelog.py
 exclude check_changelog.py
 exclude DEVELOPER.rst
