@@ -63,3 +63,10 @@ ignore = ["E501", "E701", "E741", "UP031"]
 [tool.ruff.lint.per-file-ignores]
 "unittest2pytest/fixes/fix_remove_class.py" = ["W291"]
 "unittest2pytest/fixes/fix_self_assert.py" = ["F841"]
+
+[tool.tox]
+env_list = ["py39", "py310", "py311", "py312", "py313", "py314", "py315"]
+
+[tool.tox.env_run_base]
+deps = ["pytest"]
+commands = [["pytest", "{posargs}"]]
