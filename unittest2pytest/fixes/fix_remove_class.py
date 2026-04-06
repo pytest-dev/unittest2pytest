@@ -47,6 +47,40 @@ Node(classdef,
           Leaf(6, '')])])
 """
 
+def safe_dedent(s, dedent):
+    """
+    Dedent the prefix of a dedent token at the start of a line.
+
+    Non-syntactically meaningful newlines before tokens are appended to the prefix
+    of the following token, so this avoids removing the newline part of the prefix
+    when the token dedents to below the given level of indentation.
+
+    """
+    for i, c in enumerate(s):
+        if c not in "\r\n":
+            break
+    else:
+        i = len(s)
+    return s[:i] + s[i:-dedent]
+
+def dedent_suite(suite, dedent):
+    """Dedent a suite in-place."""
+    leaves = suite.leaves()
+    for leaf in leaves:
+        if leaf.type == token.NEWLINE:
+            leaf = next(leaves, None)
+            if leaf is None:
+                return
+            if leaf.type == token.INDENT:
+                leaf.value = leaf.value[:-dedent]
+            else:
+                # this prefix will start with any duplicate newlines
+                leaf.prefix = safe_dedent(leaf.prefix, dedent)
+        elif leaf.type == token.INDENT:
+            leaf.value = leaf.value[:-dedent]
+        elif leaf.prefix[:1] in "\r\n":
+            leaf.prefix = leaf.prefix[:-dedent]
+
 class FixRemoveClass(BaseFix):
 
     PATTERN = """
@@ -55,25 +89,11 @@ class FixRemoveClass(BaseFix):
       >
     """
 
-    def dedent(self, suite, dedent):
-        self.line_num = suite.get_lineno()
-        for kid in suite.leaves():
-            if kid.type in (token.INDENT, token.DEDENT):
-                self.line_num = kid.get_lineno()
-                # todo: handle tabs
-                kid.value = kid.value[dedent:]
-                self.current_indent = kid.value
-            elif kid.get_lineno() != self.line_num:
-                # todo: handle tabs
-                if len(kid.prefix) > len(self.current_indent):
-                    kid.prefix = self.current_indent
-            
-
     def transform(self, node, results):
         suite = results['suite'].clone()
         # todo: handle tabs
         dedent = len(find_indentation(suite)) - len(find_indentation(node))
-        self.dedent(suite, dedent)
+        dedent_suite(suite, dedent)
 
         # remove the first newline behind the classdef header
         first = suite.children[0]
