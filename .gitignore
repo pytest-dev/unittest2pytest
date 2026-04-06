@@ -62,3 +62,4 @@ Icon?
 Thumbs.db
 *.pid
 ._.**~
+unittest2pytest/_version.py

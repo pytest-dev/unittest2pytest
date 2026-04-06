@@ -2,40 +2,51 @@
 Releasing unittest2pytest
 =========================
 
-This document describes the steps to make a new ``unittest2pytest`` release.
+``unittest2pytest`` uses `setuptools-scm`_ for version management.
+Versions are derived automatically from git tags.
 
-Version
--------
-
-``main`` should always be green and a potential release candidate. ``unittest2pytest`` follows
-semantic versioning, so given that the current version is ``X.Y.Z``, to find the next version number
-one needs to look at the ``CHANGELOG.rst`` file:
-
-- If there any new feature, then we must make a new **minor** release: next
-  release will be ``X.Y+1.0``.
-
-- Otherwise it is just a **bug fix** release: ``X.Y.Z+1``.
+.. _setuptools-scm: https://github.com/pypa/setuptools-scm
 
 
-Steps
------
+Relative bump
+-------------
 
-To publish a new release ``X.Y.Z``, the steps are as follows:
+Run the **Release** workflow, selecting the version bump type:
 
-#. Create a new branch named ``release-X.Y.Z`` from the latest ``main``.
+.. code-block:: console
 
-#. Update the version in ``unittest2pytest/__init__.py``.
+     gh workflow run release.yml -R pytest-dev/unittest2pytest --field bump=minor
 
-#. Update the ``CHANGELOG.rst`` file with the new release information.
+Options: ``major``, ``minor``, ``micro``, ``post``.  The version is
+computed automatically from the latest git tag.
 
-#. Commit and push the branch to ``upstream`` and open a PR.
 
-#. Once the PR is **green** and **approved**, start the ``deploy`` workflow:
+Absolute version
+----------------
 
-   .. code-block:: console
+To release a specific version (e.g. a release candidate):
 
-        gh workflow run deploy.yml -R pytest-dev/unittest2pytest --ref release-VERSION --field version=VERSION
+.. code-block:: console
 
-   The PR will be automatically merged.
+     gh workflow run release.yml -R pytest-dev/unittest2pytest --field version=1.0rc1
 
-#. Update the version in ``unittest2pytest/__init__.py`` and ``CHANGELOG.rst`` for the next release (usually use "minor+1" with the ``.dev0`` suffix).
+
+What the workflow does
+----------------------
+
+#. Runs ``scripts/make_changelog.py`` to replace the ``UNRELEASED`` section
+   with the version number and today's date.
+#. Commits, tags, and pushes.
+#. Builds the package.
+#. Creates a GitHub Release with the built artifacts.
+#. Publishes to PyPI (requires the ``release`` environment).
+#. Runs ``scripts/make_changelog.py UNRELEASED`` and pushes a follow-up commit.
+
+
+How versioning works
+--------------------
+
+- Tagged commits (e.g. ``v0.6``) produce version ``0.6``.
+- Commits after a tag produce dev versions like ``0.7.dev3+gabcdef``.
+- The version is written to ``unittest2pytest/_version.py`` at build
+  time.  This file is git-ignored and should not be committed.

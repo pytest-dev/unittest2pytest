@@ -1,8 +1,6 @@
-include CHANGELOG.rst
-include COPYING-GPLv3.txt
-include NEWLINE.rst
-include README.rst
-
-recursive-include tests *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+exclude .gitignore
+exclude DEVELOPER.rst
+exclude RELEASING.rst
+exclude tox.ini
+prune .github
+prune scripts
