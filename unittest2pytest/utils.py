@@ -29,22 +29,28 @@ import inspect
 from inspect import Parameter
 
 
-class SelfMarker: pass
+class SelfMarker:
+    pass
 
 
 def resolve_func_args(test_func, posargs, kwargs):
     sig = inspect.signature(test_func)
-    assert (list(iter(sig.parameters))[0] == 'self')
+    assert list(iter(sig.parameters))[0] == "self"
     posargs.insert(0, SelfMarker)
     ba = sig.bind(*posargs, **kwargs)
     ba.apply_defaults()
     args = ba.arguments
-    required_args = [n for n,v in sig.parameters.items()
-                     if (v.default is Parameter.empty and
-                         v.kind not in (Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD))]
-    assert args['self'] == SelfMarker
-    assert required_args[0] == 'self'
-    del required_args[0], args['self']
+    required_args = [
+        n
+        for n, v in sig.parameters.items()
+        if (
+            v.default is Parameter.empty
+            and v.kind not in (Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD)
+        )
+    ]
+    assert args["self"] == SelfMarker
+    assert required_args[0] == "self"
+    del required_args[0], args["self"]
     required_args = [args[n] for n in required_args]
 
     return required_args, args
