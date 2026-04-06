@@ -1,49 +1,58 @@
 [build-system]
-requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
+requires = [ "setuptools>=77" ]
 
 [project]
 name = "unittest2pytest"
-authors = [{name = "Hartmut Goebel", email = "h.goebel@crazy-compilers.com"}]
-license = "GPL-3.0-or-later"
-license-files = ["COPYING-GPLv3.txt", "AUTHORS.txt"]
 description = "Convert unittest test-cases to pytest"
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Intended Audience :: Developers",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: 3.15",
-    "Topic :: Software Development",
-    "Topic :: Utilities",
-]
-dynamic = ["readme", "version"]
+license = "GPL-3.0-or-later"
+license-files = [ "COPYING-GPLv3.txt", "AUTHORS.txt" ]
+authors = [ { name = "Hartmut Goebel", email = "h.goebel@crazy-compilers.com" } ]
 requires-python = ">=3.9"
-dependencies = ["fissix"]
-
-[project.urls]
-Homepage = "https://github.com/pytest-dev/unittest2pytest"
-
-[project.scripts]
-unittest2pytest = "unittest2pytest.__main__:main"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Software Development",
+  "Topic :: Utilities",
+]
+dynamic = [ "readme", "version" ]
+dependencies = [ "fissix" ]
+urls.Homepage = "https://github.com/pytest-dev/unittest2pytest"
+scripts.unittest2pytest = "unittest2pytest.__main__:main"
 
 [tool.setuptools]
-packages = ["unittest2pytest", "unittest2pytest.fixes"]
+packages = [ "unittest2pytest", "unittest2pytest.fixes" ]
 zip-safe = false
 include-package-data = false
+dynamic.readme = { file = [ "README.rst", "NEWLINE.rst", "CHANGELOG.rst" ], content-type = "text/x-rst" }
+dynamic.version = { attr = "unittest2pytest.__version__" }
 
-[tool.setuptools.dynamic]
-readme = {file = ["README.rst", "NEWLINE.rst", "CHANGELOG.rst"], content-type = "text/x-rst"}
-version = {attr = "unittest2pytest.__version__"}
+[tool.ruff]
+target-version = "py39"
+extend-exclude = [ "tests/fixtures" ]
+lint.select = [ "E", "F", "I", "UP", "W" ]
+lint.ignore = [ "E501", "E701", "E741", "UP031" ]
+lint.per-file-ignores."unittest2pytest/fixes/fix_remove_class.py" = [ "W291" ]
+lint.per-file-ignores."unittest2pytest/fixes/fix_self_assert.py" = [ "F841" ]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.15"
+
+[tool.tox]
+env_list = [ "py39", "py310", "py311", "py312", "py313", "py314", "py315" ]
+env_run_base.deps = [ "pytest" ]
+env_run_base.commands = [ [ "pytest", "{posargs}" ] ]
 
 [tool.zest-releaser]
 python-file-with-version = "unittest2pytest/__init__.py"
@@ -51,22 +60,3 @@ push-changes = false
 tag-format = "v{version}"
 tag-message = "unittest2pytest {version}"
 tag-signing = true
-
-[tool.ruff]
-target-version = "py39"
-extend-exclude = ["tests/fixtures"]
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "W", "UP"]
-ignore = ["E501", "E701", "E741", "UP031"]
-
-[tool.ruff.lint.per-file-ignores]
-"unittest2pytest/fixes/fix_remove_class.py" = ["W291"]
-"unittest2pytest/fixes/fix_self_assert.py" = ["F841"]
-
-[tool.tox]
-env_list = ["py39", "py310", "py311", "py312", "py313", "py314", "py315"]
-
-[tool.tox.env_run_base]
-deps = ["pytest"]
-commands = [["pytest", "{posargs}"]]
