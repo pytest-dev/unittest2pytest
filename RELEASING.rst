@@ -39,4 +39,3 @@ To publish a new release ``X.Y.Z``, the steps are as follows:
    The PR will be automatically merged.
 
 #. Update the version in ``unittest2pytest/__init__.py`` and ``CHANGELOG.rst`` for the next release (usually use "minor+1" with the ``.dev0`` suffix).
-

@@ -30,20 +30,20 @@ from fissix.fixer_base import BaseFix
 from fissix.fixer_util import find_indentation, token
 
 """
-Node(classdef, 
-     [Leaf(1, 'class'), 
-      Leaf(1, 'TestAssertEqual'), 
-      Leaf(7, '('), 
-      Leaf(1, 'TestCase'), 
-      Leaf(8, ')'), 
-      Leaf(11, ':'), 
+Node(classdef,
+     [Leaf(1, 'class'),
+      Leaf(1, 'TestAssertEqual'),
+      Leaf(7, '('),
+      Leaf(1, 'TestCase'),
+      Leaf(8, ')'),
+      Leaf(11, ':'),
       Node(suite, [
-          Leaf(4, '\n'), 
-          Leaf(5, '    '), 
+          Leaf(4, '\n'),
+          Leaf(5, '    '),
           Node(funcdef, [
-              Leaf(1, 'def'), 
+              Leaf(1, 'def'),
               Leaf(1, 'test_you'), ...
-          ]), 
+          ]),
           Leaf(6, '')])])
 """
 
