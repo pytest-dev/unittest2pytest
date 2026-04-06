@@ -30,7 +30,7 @@ UNRELEASED
 * Add support for ``assertDictContainsSubset``.
 
 * Put parenthesis around expressions if required.
-  
+
 * Fixed assertRaisesRegex, assertRaisesRegexp and assertWarnsRegex.
   The regex was getting replaced with an undefined variable `pattern`.
 
@@ -41,11 +41,11 @@ UNRELEASED
   the `match` kwarg in `pytest.raises` instead of creating a variable
   with the context manager and doing an assert on `re.search`.
 
-  
+
 * Add a short developer guide.
 
 * Remove testing on Python 3.0, 3.1, 3.2, add 3.6 and 3.7.
-    
+
 * Distribute package as a universal wheel.
 
 
