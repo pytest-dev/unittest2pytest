@@ -5,6 +5,12 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+  - repo: https://github.com/pytest-dev/pyproject-fmt
+    rev: "v2.12.1"
+    hooks:
+      - id: pyproject-fmt
+        # https://pyproject-fmt.readthedocs.io/en/latest/#calculating-max-supported-python-version
+        additional_dependencies: ["tox>=4.9"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
