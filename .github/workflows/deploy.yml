@@ -8,16 +8,20 @@ on:
         required: true
         default: '1.2.3'
 
+permissions: {}
+
 jobs:
 
   package:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+      with:
+        persist-credentials: false
 
     - name: Build and Check Package
-      uses: hynek/build-and-inspect-python-package@v2.17
+      uses: hynek/build-and-inspect-python-package@fe0a0fb1925ca263d076ca4f2c13e93a6e92a33e  # v2.17
 
   deploy:
     needs: package
@@ -27,22 +31,25 @@ jobs:
       contents: write  # For tag.
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+      with:
+        persist-credentials: false
 
     - name: Download Package
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
       with:
         name: Packages
         path: dist
 
     - name: Publish package to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.13.0
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e  # v1.13.0
       with:
         attestations: true
 
     - name: GitHub Release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT_INPUTS_VERSION: ${{ github.event.inputs.version }}
       run: |
-        gh release create v${{ github.event.inputs.version }} --target=${{ github.ref_name }} --title v${{ github.event.inputs.version }}
-        gh pr merge ${{ github.ref_name }} --merge
+        gh release create v${GITHUB_EVENT_INPUTS_VERSION} --target=${GITHUB_REF_NAME} --title v${GITHUB_EVENT_INPUTS_VERSION}
+        gh pr merge ${GITHUB_REF_NAME} --merge
