@@ -100,6 +100,21 @@ def parenthesize_expression(value):
     return value
 
 
+def has_comment_prefix(value):
+    return any("#" in leaf.prefix for leaf in value.leaves())
+
+
+def parenthesize_assert_expression_with_comments(assert_stmt):
+    if assert_stmt.type != syms.assert_stmt:
+        return
+    expression = assert_stmt.children[1]
+    if has_comment_prefix(expression):
+        parenthesized = parenthesize(expression.clone())
+        parenthesized.prefix = expression.prefix
+        parenthesized.children[1].prefix = ""
+        assert_stmt.set_child(1, parenthesized)
+
+
 def fill_template(template, *args):
     parts = TEMPLATE_PATTERN.findall(template)
     kids = []
@@ -475,6 +490,8 @@ class FixSelfAssert(BaseFix):
             )
         if argsdict.get("msg", None) is not None and method != "fail":
             n_stmt.children.extend((Name(","), argsdict["msg"]))
+
+        parenthesize_assert_expression_with_comments(n_stmt)
 
         def fix_line_wrapping(x):
             for c in x.children:
