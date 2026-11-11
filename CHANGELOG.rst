@@ -6,6 +6,10 @@ UNRELEASED
 
 *UNRELEASED*
 
+- Python >=3.11 is now required.
+
+- Added support for Python 3.15.
+
 
 0.5
 ---
