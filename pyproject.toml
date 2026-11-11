@@ -16,8 +16,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -27,7 +25,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dynamic = ["readme", "version"]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = ["fissix"]
 
 [project.urls]
@@ -53,7 +51,7 @@ tag-message = "unittest2pytest {version}"
 tag-signing = true
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
 extend-exclude = ["tests/fixtures"]
 
 [tool.ruff.lint]
@@ -65,7 +63,7 @@ ignore = ["E501", "E701", "E741", "UP031"]
 "unittest2pytest/fixes/fix_self_assert.py" = ["F841"]
 
 [tool.tox]
-env_list = ["py39", "py310", "py311", "py312", "py313", "py314", "py315"]
+env_list = ["py311", "py312", "py313", "py314", "py315"]
 
 [tool.tox.env_run_base]
 deps = ["pytest"]
