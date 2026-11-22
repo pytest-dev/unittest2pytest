@@ -1,14 +1,18 @@
 Changelog
 ============
 
-UNRELEASED
-----------
+0.6
+---
 
-*UNRELEASED*
+*2026-11-22*
+
+- Replaced ``lib2to3`` (removed in Python 3.13) with `fissix <https://github.com/amyreese/fissix>`__, a maintained fork, which is now a dependency (`#95`_).
+
+- Added support for Python 3.13, 3.14, and 3.15.
 
 - Python >=3.11 is now required.
 
-- Added support for Python 3.15.
+.. _#95: https://github.com/pytest-dev/unittest2pytest/pull/95
 
 
 0.5
