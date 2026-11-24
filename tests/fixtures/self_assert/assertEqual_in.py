@@ -32,6 +32,11 @@ class TestAssertEqual(TestCase):
                          msg='Wrap %s' %
                          'everything')
 
+    def test_implicit_string_with_comment(self):
+        self.assertEqual('a'
+                         # keep this comment
+                         'b', actual)
+
     def test_expression_as_argument(self):
         self.assertEqual(abc not in self.data, True)
         self.assertEqual(abc in self.data, not contains)
